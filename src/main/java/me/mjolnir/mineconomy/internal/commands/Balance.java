@@ -153,7 +153,7 @@ public class Balance {
             MCCom.setBalance(op.getUniqueId(), balance - amount);
             player.sendMessage(Locales.MESSAGE_TOOK.replace("%amount%", amount + "").replaceAll("%player%", toPlayer));
         } else {
-            player.sendMessage(Locales.ERROR_THEY_ENOUGH.replace("%player%", toPlayer));
+            player.sendMessage(Locales.ERROR_THEY_ENOUGH.replace("%account%", toPlayer));
         }
     }
 
@@ -166,7 +166,7 @@ public class Balance {
     public static void empty(Player player, String toPlayer) {
         OfflinePlayer op = Bukkit.getOfflinePlayer(toPlayer);
         MCCom.setBalance(op.getUniqueId(), 0);
-        player.sendMessage(Locales.MESSAGE_EMPTY.replace("%player%", toPlayer));
+        player.sendMessage(Locales.MESSAGE_EMPTY.replace("%account%", toPlayer));
     }
 
     private static void noAccount(Player p) {
