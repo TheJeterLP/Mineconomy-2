@@ -1,8 +1,9 @@
-name: ${project.name}
-main: ${main.class}
-version: ${project.version}
+name: Mineconomy
+main: me.mjolnir.mineconomy.MineConomy
+version: 1.7.3
+author: Bodyash
 description: >
-             MineConomy is a simple, multi-feature Economy Plugin for Bukkit.
+             MineConomy is a simple, multi-feature Economy Plugin for Spigot Hack.
 permissions:
    mineconomy.*:
       description: Gives access to all MineConomy commands.
