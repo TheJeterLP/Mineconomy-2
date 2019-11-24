@@ -20,13 +20,7 @@ package de.thejeterlp.mineconomy;
 import de.thejeterlp.mineconomy.database.AccountingBase;
 import java.util.List;
 import java.util.UUID;
-import de.thejeterlp.mineconomy.MineConomy;
 import de.thejeterlp.mineconomy.database.DatabaseFactory;
-import de.thejeterlp.mineconomy.exceptions.InsufficientFundsException;
-import de.thejeterlp.mineconomy.exceptions.NaturalNumberException;
-import de.thejeterlp.mineconomy.exceptions.NoAccountException;
-import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 
 /**
  * Handles exterior classes reading/writing account values.
@@ -43,7 +37,6 @@ public class MCCom {
      *
      * @param uuid
      * @return double
-     * @throws NoAccountException
      */
     public static double getBalance(UUID uuid) {
         if (!exists(uuid)) {
@@ -57,7 +50,6 @@ public class MCCom {
      *
      * @param uuid
      * @param balance
-     * @throws NoAccountException
      */
     public static void setBalance(UUID uuid, double balance) {
         if (!exists(uuid)) {
@@ -82,7 +74,6 @@ public class MCCom {
      * @param uuid
      * @param amount
      * @return boolean
-     * @throws NoAccountException
      */
     public static boolean canAfford(UUID uuid, double amount) {
         if (!exists(uuid)) {
@@ -96,7 +87,6 @@ public class MCCom {
      *
      * @param uuid
      * @param amount
-     * @throws NoAccountException
      */
     public static void add(UUID uuid, double amount) {
         if (!exists(uuid)) {
@@ -111,8 +101,6 @@ public class MCCom {
      *
      * @param uuid
      * @param amount
-     * @throws NoAccountException
-     * @throws InsufficientFundsException
      */
     public static void subtract(UUID uuid, double amount) {
         if (!exists(uuid)) {
@@ -121,8 +109,6 @@ public class MCCom {
         amount = Math.abs(amount);
         if (accounting.getBalance(uuid) >= amount) {
             accounting.setBalance(uuid, accounting.getBalance(uuid) - amount);
-        } else {
-            throw new InsufficientFundsException("MCCom: public void subtract(String uuid, double amount)", "amount");
         }
     }
 
@@ -131,8 +117,6 @@ public class MCCom {
      *
      * @param uuid
      * @param multiplier
-     * @throws NoAccountException
-     * @throws NaturalNumberException
      */
     public static void multiply(UUID uuid, double multiplier) {
         if (!exists(uuid)) {
@@ -146,7 +130,6 @@ public class MCCom {
      * Sets the specified account's balance to 0.
      *
      * @param uuid
-     * @throws NoAccountException
      */
     public static void empty(UUID uuid) {
         if (!exists(uuid)) {
@@ -173,8 +156,6 @@ public class MCCom {
      * @param uuidFrom
      * @param uuidTo
      * @param amount
-     * @throws NoAccountException
-     * @throws InsufficientFundsException
      */
     public static void transfer(UUID uuidFrom, UUID uuidTo, double amount) {
         if (!exists(uuidFrom)) {
@@ -187,9 +168,7 @@ public class MCCom {
         if (accounting.getBalance(uuidTo) >= amount) {
             accounting.setBalance(uuidFrom, accounting.getBalance(uuidFrom) - amount);
             accounting.setBalance(uuidTo, accounting.getBalance(uuidTo) + amount);
-        } else {
-            throw new InsufficientFundsException("MCCom: public void transfer(String uuidFrom, String uuidTo, double amount)", "amount");
-        }
+        } 
     }
 
     /**

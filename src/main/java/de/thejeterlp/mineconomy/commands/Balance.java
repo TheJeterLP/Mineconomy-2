@@ -20,7 +20,6 @@ package de.thejeterlp.mineconomy.commands;
 import java.util.UUID;
 import de.thejeterlp.mineconomy.Locales;
 import de.thejeterlp.mineconomy.MineConomy;
-import de.thejeterlp.mineconomy.exceptions.NoAccountException;
 import de.thejeterlp.mineconomy.MCCom;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -54,15 +53,7 @@ public class Balance {
      * @param player
      */
     public static void check(Player player) {
-        double balance = 0;
-
-        try {
-            balance = MCCom.getBalance(player.getUniqueId());
-        } catch (NoAccountException e) {
-            noAccount(player);
-            return;
-        }
-
+        double balance = MCCom.getBalance(player.getUniqueId());     
         player.sendMessage(Locales.ACCOUNT_BALANCE.replace("%balance%", String.valueOf(balance)));
     }
 
