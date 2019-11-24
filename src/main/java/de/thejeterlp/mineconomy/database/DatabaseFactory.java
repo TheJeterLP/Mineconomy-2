@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package me.mjolnir.mineconomy.database;
+package de.thejeterlp.mineconomy.database;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.logging.Level;
-import me.mjolnir.mineconomy.Config;
-import me.mjolnir.mineconomy.MineConomy;
+import de.thejeterlp.mineconomy.Config;
+import de.thejeterlp.mineconomy.MineConomy;
 
 public class DatabaseFactory {
 

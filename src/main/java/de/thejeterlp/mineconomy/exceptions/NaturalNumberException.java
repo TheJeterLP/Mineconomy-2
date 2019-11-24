@@ -15,25 +15,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package me.mjolnir.mineconomy.exceptions;
+package de.thejeterlp.mineconomy.exceptions;
 
 /**
- * Thrown when there is no account with the given name.
+ * Thrown when a specified number can not be negative or zero.
  *
  * @author TheJeterLP
  */
-public class NoAccountException extends RuntimeException implements MCException {
+public class NaturalNumberException extends RuntimeException implements MCException {
 
     private final String method;
     private final String variable;
 
     /**
-     * Create new NoAccountException object.
+     * Creates new NaturalNumberException.
      *
      * @param method
      * @param variable
      */
-    public NoAccountException(String method, String variable) {
+    public NaturalNumberException(String method, String variable) {
         super();
         this.method = method;
         this.variable = variable;
@@ -51,11 +51,12 @@ public class NoAccountException extends RuntimeException implements MCException 
 
     @Override
     public String getErrorDescription() {
-        return "The account you requested could not be found.";
+        return "The specified variable must be a natural number.";
     }
 
     @Override
-    public NoAccountException getError() {
+    public NaturalNumberException getError() {
         return this;
     }
+
 }

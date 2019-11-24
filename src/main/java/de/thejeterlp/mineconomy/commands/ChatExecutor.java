@@ -15,10 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package me.mjolnir.mineconomy.internal.commands;
+package de.thejeterlp.mineconomy.commands;
 
-import me.mjolnir.mineconomy.Locales;
-import me.mjolnir.mineconomy.internal.MCCom;
+import de.thejeterlp.mineconomy.Locales;
+import de.thejeterlp.mineconomy.MCCom;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

@@ -15,11 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package me.mjolnir.mineconomy;
+package de.thejeterlp.mineconomy;
 
 import java.io.File;
 import java.io.IOException;
-import me.mjolnir.mineconomy.internal.util.MCFormat;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public enum Locales {
@@ -68,7 +67,7 @@ public enum Locales {
     }
 
     public String getString() {
-        return MCFormat.color(tag + cfg.getString(path));
+        return Utils.color(tag + cfg.getString(path));
     }
 
     public static void load() {

@@ -15,11 +15,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package me.mjolnir.mineconomy;
+package de.thejeterlp.mineconomy;
 
-import me.mjolnir.mineconomy.database.DatabaseFactory;
-import me.mjolnir.mineconomy.internal.commands.ChatExecutor;
-import me.mjolnir.mineconomy.internal.listeners.MCListener;
+import de.thejeterlp.mineconomy.database.DatabaseFactory;
+import de.thejeterlp.mineconomy.commands.ChatExecutor;
+import de.thejeterlp.mineconomy.listeners.MCListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MineConomy extends JavaPlugin {

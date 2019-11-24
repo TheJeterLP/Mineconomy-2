@@ -15,16 +15,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package me.mjolnir.mineconomy.internal;
+package de.thejeterlp.mineconomy;
 
-import me.mjolnir.mineconomy.database.AccountingBase;
+import de.thejeterlp.mineconomy.database.AccountingBase;
 import java.util.List;
 import java.util.UUID;
-import me.mjolnir.mineconomy.MineConomy;
-import me.mjolnir.mineconomy.database.DatabaseFactory;
-import me.mjolnir.mineconomy.exceptions.InsufficientFundsException;
-import me.mjolnir.mineconomy.exceptions.NaturalNumberException;
-import me.mjolnir.mineconomy.exceptions.NoAccountException;
+import de.thejeterlp.mineconomy.MineConomy;
+import de.thejeterlp.mineconomy.database.DatabaseFactory;
+import de.thejeterlp.mineconomy.exceptions.InsufficientFundsException;
+import de.thejeterlp.mineconomy.exceptions.NaturalNumberException;
+import de.thejeterlp.mineconomy.exceptions.NoAccountException;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
@@ -199,77 +199,5 @@ public class MCCom {
      */
     public static List<UUID> getAccounts() {
         return accounting.getAccounts();
-    }
-
-    // Vault Methods -----------------------------------------------------------
-    /**
-     * Returns true if the specified account has at least the specified amount.
-     *
-     * @param account
-     * @param amount
-     * @return True if the specified account has at least the specified amount.
-     */
-    public static boolean canExternalAfford(String account, double amount) {
-        OfflinePlayer op = Bukkit.getOfflinePlayer(account);
-        return MCCom.canAfford(op.getUniqueId(), amount);
-    }
-
-    /**
-     * Returns the balance of the specified account.
-     *
-     * @param account
-     * @return Balance
-     */
-    public static double getExternalBalance(String account) {
-        OfflinePlayer op = Bukkit.getOfflinePlayer(account);
-        return MCCom.getBalance(op.getUniqueId());
-    }
-
-    /**
-     * Sets the specified account's balance to the specified amount.
-     *
-     * @param account
-     * @param balance
-     */
-    public static void setExternalBalance(String account, double balance) {
-        OfflinePlayer op = Bukkit.getOfflinePlayer(account);
-        MCCom.setBalance(op.getUniqueId(), balance);
-    }
-
-    // Basic Variable Getters --------------------------------------------------
-    /**
-     * Returns instance of accounting class to use.
-     *
-     * @return Accounting class
-     */
-    public static AccountingBase getAccounting() {
-        return accounting;
-    }
-
-    /**
-     * Returns the name of MineConomy.
-     *
-     * @return name
-     */
-    public static String getName() {
-        return "MineConomy";
-    }
-
-    /**
-     * Returns the current version of MineConomy.
-     *
-     * @return version
-     */
-    public static String getVersion() {
-        return MineConomy.getInstance().getDescription().getVersion();
-    }
-
-    /**
-     * Returns the MineConomy plugin.
-     *
-     * @return MineConomy
-     */
-    public static MineConomy getPlugin() {
-        return MineConomy.getInstance();
     }
 }

@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package me.mjolnir.mineconomy.database;
+package de.thejeterlp.mineconomy.database;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -25,7 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
-import me.mjolnir.mineconomy.MineConomy;
+import de.thejeterlp.mineconomy.MineConomy;
 
 public abstract class Database extends AccountingBase {
 

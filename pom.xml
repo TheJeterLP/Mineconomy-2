@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.TheJeterLP</groupId>
-    <artifactId>MineConomy-Recode</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <artifactId>MineConomy-2</artifactId>
+    <version>2.0</version>
     <packaging>jar</packaging>
     
     <properties>
@@ -14,9 +14,9 @@
     </properties>
     
     <scm>
-        <connection>scm:git:git@github.com:TheJeterLP/Mineconomy.git</connection>
-        <url>scm:git:git@github.com:TheJeterLP/Mineconomy.git</url>
-        <developerConnection>scm:git:git@github.com:TheJeterLP/Mineconomy.git</developerConnection>
+        <connection>scm:git:git@github.com:TheJeterLP/Mineconomy-2.git</connection>
+        <url>scm:git:git@github.com:TheJeterLP/Mineconomy-2.git</url>
+        <developerConnection>scm:git:git@github.com:TheJeterLP/Mineconomy-2.git</developerConnection>
     </scm>
     
     <distributionManagement>

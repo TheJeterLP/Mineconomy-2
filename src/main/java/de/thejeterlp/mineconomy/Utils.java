@@ -15,12 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package me.mjolnir.mineconomy.internal.util;
+package de.thejeterlp.mineconomy;
 
 import java.text.NumberFormat;
 import java.util.Locale;
 
-public class MCFormat {
+public class Utils {
 
     public static String color(String message) {
         return message.replaceAll("&((?i)[0-9a-fk-or])", "§$1");

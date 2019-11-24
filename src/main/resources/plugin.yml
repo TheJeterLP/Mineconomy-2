@@ -1,5 +1,5 @@
 name: ${project.artifactId}
-main: me.mjolnir.mineconomy.MineConomy
+main: de.thejeterlp.mineconomy.MineConomy
 version: ${project.version}
 author: TheJeterLP
 description: MineConomy is a simple, multi-feature Economy Plugin for Spigot Hack.

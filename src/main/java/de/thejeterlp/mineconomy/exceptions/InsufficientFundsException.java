@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package me.mjolnir.mineconomy.exceptions;
+package de.thejeterlp.mineconomy.exceptions;
 
 /**
  * Thrown when an account does not have enough money to take away.

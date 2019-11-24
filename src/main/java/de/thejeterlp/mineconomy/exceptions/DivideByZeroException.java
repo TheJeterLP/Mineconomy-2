@@ -15,25 +15,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package me.mjolnir.mineconomy.exceptions;
+package de.thejeterlp.mineconomy.exceptions;
 
 /**
- * Thrown when a specified number can not be negative or zero.
+ * Thrown when a specified number can not be zero.
  *
  * @author TheJeterLP
  */
-public class NaturalNumberException extends RuntimeException implements MCException {
+public class DivideByZeroException extends RuntimeException implements MCException {
 
     private final String method;
     private final String variable;
 
     /**
-     * Creates new NaturalNumberException.
+     * Creates new DivideByZeroException.
      *
      * @param method
      * @param variable
      */
-    public NaturalNumberException(String method, String variable) {
+    public DivideByZeroException(String method, String variable) {
         super();
         this.method = method;
         this.variable = variable;
@@ -51,11 +51,11 @@ public class NaturalNumberException extends RuntimeException implements MCExcept
 
     @Override
     public String getErrorDescription() {
-        return "The specified variable must be a natural number.";
+        return "The specified variable must be not be zero.";
     }
 
     @Override
-    public NaturalNumberException getError() {
+    public DivideByZeroException getError() {
         return this;
     }
 
