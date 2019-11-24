@@ -23,6 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import me.mjolnir.mineconomy.Config;
 
 public class MySQL extends Database {
@@ -56,10 +57,10 @@ public class MySQL extends Database {
     }
 
     @Override
-    public double getBalance(String account) {
+    public double getBalance(UUID account) {
         try {
             PreparedStatement s = getPreparedStatement("SELECT * FROM `mineconomy_accounts` WHERE `account` = ?;");
-            s.setString(1, account);
+            s.setString(1, account.toString());
             ResultSet rs = s.executeQuery();
 
             double balance = 0;
@@ -78,7 +79,7 @@ public class MySQL extends Database {
     }
 
     @Override
-    public void setBalance(String account, double amount) {
+    public void setBalance(UUID account, double amount) {
         amount = (double) Math.round(amount * 100) / 100;
 
         if (Config.MAX_BALANCE.getDouble() > 0 && amount > Config.MAX_BALANCE.getDouble()) {
@@ -88,7 +89,7 @@ public class MySQL extends Database {
         try {
             PreparedStatement st = getPreparedStatement("UPDATE `mineconomy_accounts` SET `balance` = ? WHERE `account` = ?;");
             st.setDouble(1, amount);
-            st.setString(2, account);
+            st.setString(2, account.toString());
             st.executeUpdate();
             closeStatement(st);
         } catch (Exception e) {
@@ -97,10 +98,10 @@ public class MySQL extends Database {
     }
 
     @Override
-    public boolean exists(String account) {
+    public boolean exists(UUID account) {
         try {
             PreparedStatement s = getPreparedStatement("SELECT * FROM `mineconomy_accounts` WHERE `account` = ?;");
-            s.setString(1, account);
+            s.setString(1, account.toString());
             ResultSet rs = s.executeQuery();
             boolean ret = rs.next();
             closeResultSet(rs);
@@ -113,10 +114,10 @@ public class MySQL extends Database {
     }
 
     @Override
-    public void delete(String account) {
+    public void delete(UUID account) {
         try {
             PreparedStatement st = getPreparedStatement("DELETE FROM `mineconomy_accounts` WHERE `account` = ?;");
-            st.setString(1, account);
+            st.setString(1, account.toString());
             st.executeUpdate();
             closeStatement(st);
         } catch (SQLException e) {
@@ -125,10 +126,10 @@ public class MySQL extends Database {
     }
 
     @Override
-    public void create(String account) {
+    public void create(UUID account) {
         try {
             PreparedStatement st = getPreparedStatement("INSERT INTO `mineconomy_accounts` (account, balance) VALUES (?,?);");
-            st.setString(1, account);
+            st.setString(1, account.toString());
             st.setDouble(2, Config.STARTING_BALANCE.getDouble());
             st.executeUpdate();
             closeStatement(st);
@@ -136,17 +137,19 @@ public class MySQL extends Database {
             e.printStackTrace();
         }
     }
-   
+
     @Override
-    public List<String> getAccounts() {
-        List<String> result = new ArrayList<>();
+    public List<UUID> getAccounts() {
+        List<UUID> result = new ArrayList<>();
 
         try {
             PreparedStatement s = getPreparedStatement("SELECT account FROM `mineconomy_accounts`;");
             ResultSet rs = s.executeQuery();
 
             while (rs.next()) {
-                result.add(rs.getString("account"));
+                String uu = rs.getString("account");
+                UUID uuid = UUID.fromString(uu);
+                result.add(uuid);
             }
 
             closeResultSet(rs);

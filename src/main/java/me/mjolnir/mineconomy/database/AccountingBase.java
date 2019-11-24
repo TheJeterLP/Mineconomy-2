@@ -18,18 +18,19 @@
 package me.mjolnir.mineconomy.database;
 
 import java.util.List;
+import java.util.UUID;
 
 public abstract class AccountingBase {
-   
-    public abstract double getBalance(String account);
 
-    public abstract void setBalance(String account, double amount);
+    public abstract double getBalance(UUID uuid);
 
-    public abstract boolean exists(String account);
+    public abstract void setBalance(UUID uuid, double amount);
 
-    public abstract void delete(String account);
+    public abstract boolean exists(UUID uuid);
 
-    public abstract void create(String account);
+    public abstract void delete(UUID uuid);
 
-    public abstract List<String> getAccounts();
+    public abstract void create(UUID uuid);
+
+    public abstract List<UUID> getAccounts();
 }

@@ -33,11 +33,11 @@ public class MineConomy extends JavaPlugin {
 
         Locales.load();
         Config.load();
-        
+
         DatabaseFactory.init();
-        
+
         getServer().getPluginManager().registerEvents(new MCListener(), this);
-        
+
         ChatExecutor executor = new ChatExecutor();
         getCommand("mc").setExecutor(executor);
         getCommand("money").setExecutor(executor);
@@ -50,7 +50,7 @@ public class MineConomy extends JavaPlugin {
     public void onDisable() {
         log("MineConomy is disabled.");
     }
-    
+
     public static MineConomy getInstance() {
         return INSTANCE;
     }

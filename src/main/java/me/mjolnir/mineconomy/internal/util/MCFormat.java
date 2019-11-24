@@ -25,7 +25,7 @@ public class MCFormat {
     public static String color(String message) {
         return message.replaceAll("&((?i)[0-9a-fk-or])", "§$1");
     }
-    
+
     public static String format(double amount) {
         return format(amount, true);
     }

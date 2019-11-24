@@ -43,9 +43,9 @@ public class ChatExecutor implements CommandExecutor {
 
             try {
                 if (player.hasPermission("mineconomy.account.have")) {
-                    boolean HasAccount = MCCom.exists(player.getName());
+                    boolean HasAccount = MCCom.exists(player.getUniqueId());
                     if (HasAccount == false) {
-                        MCCom.create(player.getName());
+                        MCCom.create(player.getUniqueId());
                     }
                 } else {
                     warn(player);

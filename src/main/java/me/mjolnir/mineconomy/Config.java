@@ -33,9 +33,7 @@ public enum Config {
     MYSQL_PASSWORD("MySQL.Password", "password", "The password of the user"),
     STARTING_BALANCE("Balance.StartingBalance", 0, "The Balance a new player starts with"),
     MAX_BALANCE("Balance.MaxBalance", 9999999.99, "The maximum amount a player can have"),
-    CURRENCY_NAME("Balance.CurrencyName", "Dollars", "The name of the currency"),
-    
-    ;
+    CURRENCY_NAME("Balance.CurrencyName", "Dollars", "The name of the currency"),;
 
     private final Object value;
     private final String path;

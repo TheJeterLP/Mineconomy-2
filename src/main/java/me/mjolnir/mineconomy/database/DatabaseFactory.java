@@ -24,49 +24,49 @@ import me.mjolnir.mineconomy.Config;
 import me.mjolnir.mineconomy.MineConomy;
 
 public class DatabaseFactory {
-    
+
     private static Database db = null;
-    
+
     public static void init() {
         if (Config.MYSQL_USE.getBoolean()) {
             db = new MySQL(Config.MYSQL_IP.getString(), Config.MYSQL_USER.getString(), Config.MYSQL_PASSWORD.getString(), Config.MYSQL_DATABASE.getString(), Config.MYSQL_PORT.getInteger());
         } else {
             db = new SQLite(new File(MineConomy.getInstance().getDataFolder(), "Database.db"));
         }
-        
+
         if (db.testConnection()) {
             createTables();
             MineConomy.getInstance().getLogger().log(Level.INFO, "Connected to database via {0}", db.getClass().getSimpleName());
         } else {
             MineConomy.getInstance().getLogger().log(Level.SEVERE, "Could not connect to the Database!");
         }
-        
+
     }
-    
+
     private static void createTables() {
-        try {   
+        try {
             String ACCOUNT_TABLE;
-            if (db.getType() == Database.Type.SQLITE) {               
+            if (db.getType() == Database.Type.SQLITE) {
                 ACCOUNT_TABLE = "CREATE TABLE IF NOT EXISTS `mineconomy_accounts` ("
                         + "`id` INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,"
                         + "`account` varchar(64) NOT NULL,"
                         + "`balance` DOUBLE NOT NULL"
-                        + ");";                             
+                        + ");";
             } else {
                 ACCOUNT_TABLE = "CREATE TABLE IF NOT EXISTS `mineconomy_accounts` ("
                         + "`id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,"
                         + "`account` varchar(64) NOT NULL,"
                         + "`balance` DOUBLE NOT NULL"
-                        + ");";              
+                        + ");";
             }
             db.executeStatement(ACCOUNT_TABLE);
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
-    
+
     public static Database getDatabase() {
         return db;
     }
-    
+
 }

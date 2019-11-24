@@ -17,10 +17,13 @@
  */
 package me.mjolnir.mineconomy.internal.commands;
 
+import java.util.UUID;
 import me.mjolnir.mineconomy.Locales;
 import me.mjolnir.mineconomy.MineConomy;
 import me.mjolnir.mineconomy.exceptions.NoAccountException;
 import me.mjolnir.mineconomy.internal.MCCom;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 /**
@@ -54,7 +57,7 @@ public class Balance {
         double balance = 0;
 
         try {
-            balance = MCCom.getBalance(player.getName());
+            balance = MCCom.getBalance(player.getUniqueId());
         } catch (NoAccountException e) {
             noAccount(player);
             return;
@@ -70,7 +73,8 @@ public class Balance {
      * @param toPlayer
      */
     public static void get(Player player, String toPlayer) {
-        String msg = Locales.ACCOUNT_BALANCE.replace("%balance%", MCCom.getBalance(toPlayer) + "");
+        OfflinePlayer op = Bukkit.getOfflinePlayer(toPlayer);
+        String msg = Locales.ACCOUNT_BALANCE.replace("%balance%", MCCom.getBalance(op.getUniqueId()) + "");
         player.sendMessage(msg);
     }
 
@@ -82,8 +86,9 @@ public class Balance {
      * @param amount
      */
     public static void set(Player player, String toPlayer, double amount) {
-        MCCom.setBalance(toPlayer, amount);
-        player.sendMessage(Locales.MESSAGE_BALANCE_SET.replace("%amount%", MCCom.getBalance(toPlayer) + "").replaceAll("%player%", toPlayer));
+        OfflinePlayer op = Bukkit.getOfflinePlayer(toPlayer);
+        MCCom.setBalance(op.getUniqueId(), amount);
+        player.sendMessage(Locales.MESSAGE_BALANCE_SET.replace("%amount%", MCCom.getBalance(op.getUniqueId()) + "").replaceAll("%player%", toPlayer));
     }
 
     /**
@@ -95,14 +100,16 @@ public class Balance {
      */
     public static void pay(Player player, String toPlayer, double payAmount) {
         String name = player.getName();
-        double balance = MCCom.getBalance(name);
+        UUID uuid = player.getUniqueId();
+        double balance = MCCom.getBalance(uuid);
         double amount = Math.abs(payAmount);
 
-        if (MCCom.canAfford(name, amount)) {
-            MCCom.setBalance(name, balance - amount);
-            double toBalance = MCCom.getBalance(toPlayer);
+        if (MCCom.canAfford(uuid, amount)) {
+            MCCom.setBalance(uuid, balance - amount);
+            OfflinePlayer op = Bukkit.getOfflinePlayer(toPlayer);
+            double toBalance = MCCom.getBalance(op.getUniqueId());
 
-            MCCom.setBalance(toPlayer, toBalance + amount);
+            MCCom.setBalance(op.getUniqueId(), toBalance + amount);
             player.sendMessage(Locales.MESSAGE_PAYED_TO.replace("%amount%", amount + "").replaceAll("%player%", toPlayer));
 
             Player reciever = MineConomy.getInstance().getServer().getPlayer(toPlayer);
@@ -121,9 +128,11 @@ public class Balance {
      * @param payAmount
      */
     public static void give(Player player, String toPlayer, String payAmount) {
+        OfflinePlayer op = Bukkit.getOfflinePlayer(toPlayer);
+
         double amount = Double.parseDouble(payAmount);
-        amount += MCCom.getBalance(toPlayer);
-        MCCom.setBalance(toPlayer, amount);
+        amount += MCCom.getBalance(op.getUniqueId());
+        MCCom.setBalance(op.getUniqueId(), amount);
         player.sendMessage(Locales.MESSAGE_GIVE.replace("%player%", toPlayer).replaceAll("%amount%", payAmount));
     }
 
@@ -135,10 +144,11 @@ public class Balance {
      * @param takeAmount
      */
     public static void take(Player player, String toPlayer, String takeAmount) {
+        OfflinePlayer op = Bukkit.getOfflinePlayer(toPlayer);
         double amount = Double.parseDouble(takeAmount);
-        double balance = MCCom.getBalance(toPlayer);
-        if (MCCom.canAfford(toPlayer, amount)) {
-            MCCom.setBalance(toPlayer, balance - amount);
+        double balance = MCCom.getBalance(op.getUniqueId());
+        if (MCCom.canAfford(op.getUniqueId(), amount)) {
+            MCCom.setBalance(op.getUniqueId(), balance - amount);
             player.sendMessage(Locales.MESSAGE_TOOK.replace("%amount%", amount + "").replaceAll("%player%", toPlayer));
         } else {
             player.sendMessage(Locales.ERROR_THEY_ENOUGH.replace("%player%", toPlayer));
@@ -152,7 +162,8 @@ public class Balance {
      * @param toPlayer
      */
     public static void empty(Player player, String toPlayer) {
-        MCCom.setBalance(toPlayer, 0);
+        OfflinePlayer op = Bukkit.getOfflinePlayer(toPlayer);
+        MCCom.setBalance(op.getUniqueId(), 0);
         player.sendMessage(Locales.MESSAGE_EMPTY.replace("%player%", toPlayer));
     }
 

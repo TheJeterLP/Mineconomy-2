@@ -19,13 +19,14 @@ package me.mjolnir.mineconomy.internal;
 
 import me.mjolnir.mineconomy.database.AccountingBase;
 import java.util.List;
-import me.mjolnir.mineconomy.Config;
+import java.util.UUID;
 import me.mjolnir.mineconomy.MineConomy;
 import me.mjolnir.mineconomy.database.DatabaseFactory;
-import me.mjolnir.mineconomy.exceptions.DivideByZeroException;
 import me.mjolnir.mineconomy.exceptions.InsufficientFundsException;
 import me.mjolnir.mineconomy.exceptions.NaturalNumberException;
 import me.mjolnir.mineconomy.exceptions.NoAccountException;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 
 /**
  * Handles exterior classes reading/writing account values.
@@ -40,136 +41,154 @@ public class MCCom {
     /**
      * Returns the balance of the specified player.
      *
-     * @param account
+     * @param uuid
      * @return double
      * @throws NoAccountException
      */
-    public static double getBalance(String account) {
-        return accounting.getBalance(account);
+    public static double getBalance(UUID uuid) {
+        if (!exists(uuid)) {
+            create(uuid);
+        }
+        return accounting.getBalance(uuid);
     }
 
     /**
      * Sets the balance of the specified player.
      *
-     * @param account
+     * @param uuid
      * @param balance
      * @throws NoAccountException
      */
-    public static void setBalance(String account, double balance) {
-        accounting.setBalance(account, balance);
+    public static void setBalance(UUID uuid, double balance) {
+        if (!exists(uuid)) {
+            create(uuid);
+        }
+        accounting.setBalance(uuid, balance);
     }
 
     /**
      * Returns true if specified player has an account.
      *
-     * @param account
+     * @param uuid
      * @return boolean
      */
-    public static boolean exists(String account) {
-        return accounting.exists(account);
+    public static boolean exists(UUID uuid) {
+        return accounting.exists(uuid);
     }
 
     /**
      * Returns true if specified player has specified amount in their account.
      *
-     * @param account
+     * @param uuid
      * @param amount
      * @return boolean
      * @throws NoAccountException
      */
-    public static boolean canAfford(String account, double amount) {
-        return accounting.getBalance(account) >= amount;
+    public static boolean canAfford(UUID uuid, double amount) {
+        if (!exists(uuid)) {
+            create(uuid);
+        }
+        return accounting.getBalance(uuid) >= amount;
     }
 
     /**
      * Adds the specified amount to specified account.
      *
-     * @param account
+     * @param uuid
      * @param amount
      * @throws NoAccountException
      */
-    public static void add(String account, double amount) {
+    public static void add(UUID uuid, double amount) {
+        if (!exists(uuid)) {
+            create(uuid);
+        }
         amount = Math.abs(amount);
-        accounting.setBalance(account, accounting.getBalance(account) + amount);
+        accounting.setBalance(uuid, accounting.getBalance(uuid) + amount);
     }
 
     /**
      * Subtracts the specified amount from specified account.
      *
-     * @param account
+     * @param uuid
      * @param amount
      * @throws NoAccountException
      * @throws InsufficientFundsException
      */
-    public static void subtract(String account, double amount) {
+    public static void subtract(UUID uuid, double amount) {
+        if (!exists(uuid)) {
+            create(uuid);
+        }
         amount = Math.abs(amount);
-        if (accounting.getBalance(account) >= amount) {
-            accounting.setBalance(account, accounting.getBalance(account) - amount);
+        if (accounting.getBalance(uuid) >= amount) {
+            accounting.setBalance(uuid, accounting.getBalance(uuid) - amount);
         } else {
-            throw new InsufficientFundsException("MCCom: public void subtract(String account, double amount)", "amount");
+            throw new InsufficientFundsException("MCCom: public void subtract(String uuid, double amount)", "amount");
         }
     }
 
     /**
      * Multiplies the specified account by the specified multiplier.
      *
-     * @param account
+     * @param uuid
      * @param multiplier
      * @throws NoAccountException
      * @throws NaturalNumberException
      */
-    public static void multiply(String account, double multiplier) {
+    public static void multiply(UUID uuid, double multiplier) {
+        if (!exists(uuid)) {
+            create(uuid);
+        }
         multiplier = Math.abs(multiplier);
-        accounting.setBalance(account, accounting.getBalance(account) * multiplier);
+        accounting.setBalance(uuid, accounting.getBalance(uuid) * multiplier);
     }
 
     /**
      * Sets the specified account's balance to 0.
      *
-     * @param account
+     * @param uuid
      * @throws NoAccountException
      */
-    public static void empty(String account) {
-        accounting.setBalance(account, 0);
+    public static void empty(UUID uuid) {
+        if (!exists(uuid)) {
+            create(uuid);
+        }
+        accounting.setBalance(uuid, 0);
     }
 
     /**
      * Creates a new account with the specified name.
      *
-     * @param account
+     * @param uuid
      */
-    public static void create(String account) {
-        if (!exists(account)) {
-            accounting.create(account);
+    public static void create(UUID uuid) {
+        if (!exists(uuid)) {
+            accounting.create(uuid);
         }
-    }
-
-    /**
-     * Deletes an existing account with the specified name.
-     *
-     * @param account
-     * @throws NoAccountException
-     */
-    public static void delete(String account) {
-        accounting.delete(account);
     }
 
     /**
      * The specified amount is added to the specified FROM account and
      * subtracted from the specified TO account.
      *
-     * @param accountFrom
-     * @param accountTo
+     * @param uuidFrom
+     * @param uuidTo
      * @param amount
      * @throws NoAccountException
      * @throws InsufficientFundsException
      */
-    public static void transfer(String accountFrom, String accountTo, double amount) {
-        if (accounting.getBalance(accountTo) >= amount) {
-            accounting.setBalance(accountFrom, accounting.getBalance(accountFrom) - amount);
-            accounting.setBalance(accountTo, accounting.getBalance(accountTo) + amount);
+    public static void transfer(UUID uuidFrom, UUID uuidTo, double amount) {
+        if (!exists(uuidFrom)) {
+            create(uuidFrom);
+        }
+        
+        if (!exists(uuidTo)) {
+            create(uuidTo);
+        }
+        if (accounting.getBalance(uuidTo) >= amount) {
+            accounting.setBalance(uuidFrom, accounting.getBalance(uuidFrom) - amount);
+            accounting.setBalance(uuidTo, accounting.getBalance(uuidTo) + amount);
         } else {
-            throw new InsufficientFundsException("MCCom: public void transfer(String accountFrom, String accountTo, double amount)", "amount");
+            throw new InsufficientFundsException("MCCom: public void transfer(String uuidFrom, String uuidTo, double amount)", "amount");
         }
     }
 
@@ -178,7 +197,7 @@ public class MCCom {
      *
      * @return An ArrayList of MineConomy Accounts
      */
-    public static List<String> getAccounts() {
+    public static List<UUID> getAccounts() {
         return accounting.getAccounts();
     }
 
@@ -191,7 +210,8 @@ public class MCCom {
      * @return True if the specified account has at least the specified amount.
      */
     public static boolean canExternalAfford(String account, double amount) {
-        return MCCom.canAfford(account, amount);
+        OfflinePlayer op = Bukkit.getOfflinePlayer(account);
+        return MCCom.canAfford(op.getUniqueId(), amount);
     }
 
     /**
@@ -201,7 +221,8 @@ public class MCCom {
      * @return Balance
      */
     public static double getExternalBalance(String account) {
-        return MCCom.getBalance(account);
+        OfflinePlayer op = Bukkit.getOfflinePlayer(account);
+        return MCCom.getBalance(op.getUniqueId());
     }
 
     /**
@@ -211,7 +232,8 @@ public class MCCom {
      * @param balance
      */
     public static void setExternalBalance(String account, double balance) {
-        MCCom.setBalance(account, balance);
+        OfflinePlayer op = Bukkit.getOfflinePlayer(account);
+        MCCom.setBalance(op.getUniqueId(), balance);
     }
 
     // Basic Variable Getters --------------------------------------------------

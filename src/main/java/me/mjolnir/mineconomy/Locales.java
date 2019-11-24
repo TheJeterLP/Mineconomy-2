@@ -46,8 +46,7 @@ public enum Locales {
     ERROR_NO_ACCOUNT("Errors.NoAccount", "&cThe account you requested does not exist."),
     ERROR_MONEY_FORMAT("Errors.MoneyFormat", "&cYou must enter the correct monetarily formatted number."),
     ERROR_WRONG_USER("Error.WrongUser", "By now, Only Players can use commands!"),
-    HELP_1("Help", "<br>&a===== MineConomy Help Page =====<br>&f<REQUIRED> [OPTION] (OPTIONAL)<br><br>&7/mc help <PAGE>&f - displays this menu.<br>&7/mc balance &for &7/money &f- displays your account balance.<br>&7/mc pay <ACCOUNT> &f- pays specified account.<br>&7/mc get <ACCOUNT> &f- displays specified account's balance.<br>&7/mc set <ACCOUNT> <AMOUNT> &f- sets specified account's balance.<br>&7/mc empty <ACCOUNT> &f- sets specified account's balance to 0.<br>&7/mc give <ACCOUNT> <AMOUNT> &f- gives specified account the specified amount.<br>&7/mc take <ACCOUNT> <AMOUNT> &f- takes specified amount from the specified account."),
-    ;
+    HELP_1("Help", "<br>&a===== MineConomy Help Page =====<br>&f<REQUIRED> [OPTION] (OPTIONAL)<br><br>&7/mc help <PAGE>&f - displays this menu.<br>&7/mc balance &for &7/money &f- displays your account balance.<br>&7/mc pay <ACCOUNT> &f- pays specified account.<br>&7/mc get <ACCOUNT> &f- displays specified account's balance.<br>&7/mc set <ACCOUNT> <AMOUNT> &f- sets specified account's balance.<br>&7/mc empty <ACCOUNT> &f- sets specified account's balance to 0.<br>&7/mc give <ACCOUNT> <AMOUNT> &f- gives specified account the specified amount.<br>&7/mc take <ACCOUNT> <AMOUNT> &f- takes specified amount from the specified account."),;
 
     private Locales(String path, Object val) {
         this.path = path;

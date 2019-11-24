@@ -30,11 +30,11 @@ public class MCListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (!(MCCom.exists(player.getName()))) {
-            MCCom.create(player.getName());
+        if (!(MCCom.exists(player.getUniqueId()))) {
+            MCCom.create(player.getUniqueId());
             player.sendMessage(Locales.ACCOUNT_CREATED.getString());
         }
 
-        player.sendMessage(Locales.MESSAGE_WELCOME.replace("%balance%", MCCom.getBalance(player.getName()) + "").replaceAll("%player%", player.getDisplayName()));
+        player.sendMessage(Locales.MESSAGE_WELCOME.replace("%balance%", MCCom.getBalance(player.getUniqueId()) + "").replaceAll("%player%", player.getDisplayName()));
     }
 }
