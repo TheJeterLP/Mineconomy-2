@@ -112,9 +112,11 @@ public class Balance {
             MCCom.setBalance(op.getUniqueId(), toBalance + amount);
             player.sendMessage(Locales.MESSAGE_PAYED_TO.replace("%amount%", amount + "").replaceAll("%player%", toPlayer));
 
-            Player reciever = MineConomy.getInstance().getServer().getPlayer(toPlayer);
+            if (op.isOnline()) {
+                Player reciever = MineConomy.getInstance().getServer().getPlayer(toPlayer);
+                reciever.sendMessage(Locales.MESSAGE_PAYED_FROM.replace("%amount%", amount + "").replaceAll("%player%", name));
+            }
 
-            reciever.sendMessage(Locales.MESSAGE_PAYED_FROM.replace("%amount%", amount + "").replaceAll("%player%", name));
         } else {
             player.sendMessage(Locales.ERROR_YOU_ENOUGH.getString());
         }
