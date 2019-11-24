@@ -82,7 +82,7 @@ public class SQLite extends Database {
             st.setString(2, account);
             st.executeUpdate();
             closeStatement(st);
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
@@ -118,43 +118,9 @@ public class SQLite extends Database {
     @Override
     public void create(String account) {
         try {
-            PreparedStatement st = getPreparedStatement("INSERT INTO `mineconomy_accounts` (account, balance, status) VALUES (?,?,?);");
+            PreparedStatement st = getPreparedStatement("INSERT INTO `mineconomy_accounts` (account, balance) VALUES (?,?);");
             st.setString(1, account);
             st.setDouble(2, Config.STARTING_BALANCE.getDouble());
-            st.setString(3, "NORMAL");
-            st.executeUpdate();
-            closeStatement(st);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public String getStatus(String account) {
-        try {
-            PreparedStatement s = getPreparedStatement("SELECT status FROM `mineconomy_accounts` WHERE `account` = ?;");
-            s.setString(1, account);
-            ResultSet rs = s.executeQuery();
-
-            rs.next();
-            String ret = rs.getString("status");
-
-            closeResultSet(rs);
-            closeStatement(s);
-
-            return ret;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-    @Override
-    public void setStatus(String account, String status) {
-        try {
-            PreparedStatement st = getPreparedStatement("UPDATE `mineconomy_accounts` SET status = ? WHERE account = ?;");
-            st.setString(1, status);
-            st.setString(2, account);
             st.executeUpdate();
             closeStatement(st);
         } catch (SQLException e) {

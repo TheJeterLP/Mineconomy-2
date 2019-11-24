@@ -1,9 +1,23 @@
+/*
+ * Copyright (C) 2019 TheJeterLP
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 package me.mjolnir.mineconomy;
 
-import java.util.logging.Level;
 import me.mjolnir.mineconomy.database.DatabaseFactory;
-import me.mjolnir.mineconomy.internal.Banking;
-import me.mjolnir.mineconomy.internal.MCLang;
 import me.mjolnir.mineconomy.internal.commands.ChatExecutor;
 import me.mjolnir.mineconomy.internal.listeners.MCListener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,21 +31,16 @@ public class MineConomy extends JavaPlugin {
         INSTANCE = this;
         log("Enabling plugin...");
 
+        Locales.load();
         Config.load();
+        
         DatabaseFactory.init();
         
-        Banking.load();
-        MCLang.load();
-
-        saveResource("README.txt", true);
-
         getServer().getPluginManager().registerEvents(new MCListener(), this);
-
+        
         ChatExecutor executor = new ChatExecutor();
-
         getCommand("mc").setExecutor(executor);
         getCommand("money").setExecutor(executor);
-        getCommand("mcb").setExecutor(executor);
 
         log("Version " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " is enabled!");
 
@@ -39,11 +48,6 @@ public class MineConomy extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        log("Disabling MineConomy...");
-
-        Banking.save();
-        MCLang.save();
-
         log("MineConomy is disabled.");
     }
     
@@ -52,6 +56,6 @@ public class MineConomy extends JavaPlugin {
     }
 
     public static void log(String msg) {
-        INSTANCE.getLogger().log(Level.INFO, msg);
+        INSTANCE.getLogger().info(msg);
     }
 }

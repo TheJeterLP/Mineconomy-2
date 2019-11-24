@@ -49,15 +49,15 @@ public class DatabaseFactory {
             if (db.getType() == Database.Type.SQLITE) {               
                 ACCOUNT_TABLE = "CREATE TABLE IF NOT EXISTS `mineconomy_accounts` ("
                         + "`id` INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,"
-                        + "`account` TEXT NOT NULL,"
-                        + "`balance` DOUBLE NOT NULL,"
-                        + "`status` TEXT NOT NULL,";                               
+                        + "`account` varchar(64) NOT NULL,"
+                        + "`balance` DOUBLE NOT NULL"
+                        + ");";                             
             } else {
                 ACCOUNT_TABLE = "CREATE TABLE IF NOT EXISTS `mineconomy_accounts` ("
                         + "`id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-                        + "`account` TEXT NOT NULL,"
-                        + "`balance` DOUBLE NOT NULL,"
-                        + "`status` TEXT NOT NULL,";               
+                        + "`account` varchar(64) NOT NULL,"
+                        + "`balance` DOUBLE NOT NULL"
+                        + ");";              
             }
             db.executeStatement(ACCOUNT_TABLE);
         } catch (SQLException ex) {

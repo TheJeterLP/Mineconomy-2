@@ -1,21 +1,32 @@
+/*
+ * Copyright (C) 2019 TheJeterLP
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ */
 package me.mjolnir.mineconomy.internal.commands;
 
+import me.mjolnir.mineconomy.Locales;
 import me.mjolnir.mineconomy.MineConomy;
-import me.mjolnir.mineconomy.exceptions.AccountNameConflictException;
-import me.mjolnir.mineconomy.exceptions.BankNameConflictException;
-import me.mjolnir.mineconomy.exceptions.InsufficientFundsException;
-import me.mjolnir.mineconomy.exceptions.MaxDebtException;
 import me.mjolnir.mineconomy.exceptions.NoAccountException;
-import me.mjolnir.mineconomy.exceptions.NoBankException;
 import me.mjolnir.mineconomy.internal.MCCom;
-import me.mjolnir.mineconomy.internal.MCLang;
-import me.mjolnir.mineconomy.internal.util.MCFormat;
 import org.bukkit.entity.Player;
 
 /**
  * Keeps MCCommandExecutor code neater.
  *
- * @author MjolnirCommando
+ * @author TheJeterLP
  */
 public class Balance {
 
@@ -26,22 +37,7 @@ public class Balance {
      * @param page
      */
     public static void help(Player player, int page) {
-        String pgcontent = "";
-
-        switch (page) {
-            case 1:
-                pgcontent = MCLang.messageHelp1;
-                break;
-            case 2:
-                pgcontent = MCLang.messageHelp2;
-                break;
-            case 3:
-                pgcontent = MCLang.messageHelp3;
-                break;
-            default:
-                break;
-        }
-
+        String pgcontent = Locales.HELP_1.getString();
         String[] breaks = pgcontent.split("<br>");
 
         for (int i = 0; breaks.length > i; i++) {
@@ -64,9 +60,7 @@ public class Balance {
             return;
         }
 
-        String[] args = {balance + ""};
-
-        player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageAccountBalance, args));
+        player.sendMessage(Locales.ACCOUNT_BALANCE.replace("%balance%", String.valueOf(balance)));
     }
 
     /**
@@ -76,8 +70,8 @@ public class Balance {
      * @param toPlayer
      */
     public static void get(Player player, String toPlayer) {
-        String[] args = {toPlayer, MCCom.getBalance(toPlayer) + ""};
-        player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageGetBalance, args));
+        String msg = Locales.ACCOUNT_BALANCE.replace("%balance%", MCCom.getBalance(toPlayer) + "");
+        player.sendMessage(msg);
     }
 
     /**
@@ -88,15 +82,8 @@ public class Balance {
      * @param amount
      */
     public static void set(Player player, String toPlayer, double amount) {
-        try {
-            MCCom.setBalance(toPlayer, amount);
-
-            String[] args = {toPlayer, MCCom.getBalance(toPlayer) + ""};
-
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageSetBalance, args));
-        } catch (MaxDebtException e) {
-            player.sendMessage(MCLang.tag + MCLang.errorMaxDebt);
-        }
+        MCCom.setBalance(toPlayer, amount);
+        player.sendMessage(Locales.MESSAGE_BALANCE_SET.replace("%amount%", MCCom.getBalance(toPlayer) + "").replaceAll("%player%", toPlayer));
     }
 
     /**
@@ -110,29 +97,19 @@ public class Balance {
         String name = player.getName();
         double balance = MCCom.getBalance(name);
         double amount = Math.abs(payAmount);
-        
+
         if (MCCom.canAfford(name, amount)) {
             MCCom.setBalance(name, balance - amount);
             double toBalance = MCCom.getBalance(toPlayer);
-            
+
             MCCom.setBalance(toPlayer, toBalance + amount);
+            player.sendMessage(Locales.MESSAGE_PAYED_TO.replace("%amount%", amount + "").replaceAll("%player%", toPlayer));
 
-            String[] args = {amount + "", toPlayer};
+            Player reciever = MineConomy.getInstance().getServer().getPlayer(toPlayer);
 
-            player.sendMessage(MCLang.tag
-                    + MCLang.parse(MCLang.messagePayedTo, args));
-            try {
-                Player reciever = MineConomy.getInstance().getServer().getPlayer(toPlayer);
-
-                String[] args2 = {name, amount + ""};
-
-                reciever.sendMessage(MCLang.tag + MCLang.parse(MCLang.messagePayedFrom, args2));
-            } catch (NullPointerException e) {
-                //IOH.error("NullPointerException", e); In case player is offline
-            }
+            reciever.sendMessage(Locales.MESSAGE_PAYED_FROM.replace("%amount%", amount + "").replaceAll("%player%", name));
         } else {
-            player.sendMessage(MCLang.tag
-                    + MCLang.errorYouEnough);
+            player.sendMessage(Locales.ERROR_YOU_ENOUGH.getString());
         }
     }
 
@@ -143,14 +120,11 @@ public class Balance {
      * @param toPlayer
      * @param payAmount
      */
-    public static void give(Player player, String toPlayer, String payAmount) {        
+    public static void give(Player player, String toPlayer, String payAmount) {
         double amount = Double.parseDouble(payAmount);
         amount += MCCom.getBalance(toPlayer);
         MCCom.setBalance(toPlayer, amount);
-
-        String[] args = {toPlayer, payAmount};
-
-        player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageGive, args));
+        player.sendMessage(Locales.MESSAGE_GIVE.replace("%player%", toPlayer).replaceAll("%amount%", payAmount));
     }
 
     /**
@@ -160,20 +134,14 @@ public class Balance {
      * @param toPlayer
      * @param takeAmount
      */
-    public static void take(Player player, String toPlayer, String takeAmount) {        
+    public static void take(Player player, String toPlayer, String takeAmount) {
         double amount = Double.parseDouble(takeAmount);
         double balance = MCCom.getBalance(toPlayer);
         if (MCCom.canAfford(toPlayer, amount)) {
             MCCom.setBalance(toPlayer, balance - amount);
-
-            String[] args = {amount + "", toPlayer};
-
-            player.sendMessage(MCLang.tag
-                    + MCLang.parse(MCLang.messageTook, args));
+            player.sendMessage(Locales.MESSAGE_TOOK.replace("%amount%", amount + "").replaceAll("%player%", toPlayer));
         } else {
-            String[] args = {toPlayer};
-            player.sendMessage(MCLang.tag
-                    + MCLang.parse(MCLang.errorTheyEnough, args));
+            player.sendMessage(Locales.ERROR_THEY_ENOUGH.replace("%player%", toPlayer));
         }
     }
 
@@ -183,361 +151,13 @@ public class Balance {
      * @param player
      * @param toPlayer
      */
-    public static void empty(Player player, String toPlayer) {      
+    public static void empty(Player player, String toPlayer) {
         MCCom.setBalance(toPlayer, 0);
-        try {
-            String[] args = {toPlayer};
-
-            player.sendMessage(MCLang.tag
-                    + MCLang.parse(MCLang.messageEmpty, args));
-        } catch (NullPointerException e) {
-            // IGNORE
-        }
-    }
-
-    /**
-     * Creates a new account.
-     *
-     * @param player
-     * @param toPlayer
-     */
-    public static void create(Player player, String toPlayer) {
-        String[] args = {toPlayer};
-
-        try {
-            MCCom.create(toPlayer);
-
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageCreated, args));
-        } catch (AccountNameConflictException e) {
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.errorAccountExists, args));
-        }
-    }
-
-    /**
-     * Deletes an account.
-     *
-     * @param player
-     * @param toPlayer
-     */
-    public static void delete(Player player, String toPlayer) {        
-        MCCom.delete(toPlayer);
-
-        String[] args = {toPlayer};
-
-        player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageDeleted, args));
-    }
-     
-    /**
-     * Check's the player's bank balance.
-     *
-     * @param bank
-     * @param player
-     */
-    public static void check(String bank, Player player) {
-        double balance = 0;
-
-        try {
-            balance = MCCom.getBalance(bank, player.getName());
-        } catch (NoAccountException e) {
-            noAccount(player, bank);
-            return;
-        } catch (NoBankException e) {
-            noBank(player, bank);
-            return;
-        }
-
-        String[] args = {bank, balance + ""};
-
-        player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageBankBalance, args));
-    }
-
-    /**
-     * Creates new bank.
-     *
-     * @param player
-     * @param bank
-     */
-    public static void createBank(Player player, String bank) {
-        String[] args = {bank};
-        try {
-            MCCom.createBank(bank);
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageBankCreated, args));
-        } catch (BankNameConflictException e) {
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.errorBankExists, args));
-        }
-    }
-
-    /**
-     * Creates new bank account.
-     *
-     * @param player
-     * @param bank
-     * @param account
-     */
-    public static void create(Player player, String bank, String account) {
-        String[] args = {account, bank};
-
-        try {
-            MCCom.create(bank, account);
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageBankAccountCreated, args));
-        } catch (AccountNameConflictException e) {
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.errorBankAccountExists, args));
-        }
-    }
-
-    /**
-     * Deletes specified bank.
-     *
-     * @param player
-     * @param bank
-     */
-    public static void deleteBank(Player player, String bank) {
-        String[] args = {bank};
-        try {
-            MCCom.deleteBank(bank);
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageBankDeleted, args));
-        } catch (NoBankException e) {
-            noBank(player, bank);
-        }
-    }
-
-    /**
-     * Deletes specified bank account.
-     *
-     * @param player
-     * @param bank
-     * @param account
-     */
-    public static void delete(Player player, String bank, String account) {
-        String[] args = {account, bank};
-
-        try {
-            MCCom.delete(bank, account);
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageBankAccountDeleted, args));
-        } catch (NoAccountException e) {
-            noAccount(player, bank);
-        }
-    }
-
-    /**
-     * Displays balance of specified bank account.
-     *
-     * @param player
-     * @param bank
-     * @param account
-     */
-    public static void get(Player player, String bank, String account) {
-        try {
-            double balance = MCCom.getBalance(bank, account);
-            String[] args = {account, bank, balance + ""};
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageGetBankAccount, args));
-        } catch (NoAccountException e) {
-            noAccount(player, bank);
-        } catch (NoBankException e) {
-            noBank(player, bank);
-        }
-    }
-
-    /**
-     * Sets account balance.
-     *
-     * @param player
-     * @param bank
-     * @param account
-     * @param balance
-     */
-    public static void set(Player player, String bank, String account, double balance) {
-        try {
-            MCCom.setBalance(bank, account, balance);
-            String[] args = {account, bank, balance + ""};
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageSetBankAccount, args));
-        } catch (NoAccountException e) {
-            noAccount(player, bank);
-        } catch (NoBankException e) {
-            noBank(player, bank);
-        } catch (MaxDebtException e) {
-            player.sendMessage(MCLang.tag + MCLang.errorMaxDebt);
-        }
-    }
-
-    /**
-     * Deposits amount in bank account.
-     *
-     * @param player
-     * @param bank
-     * @param account
-     * @param amount
-     */
-    public static void deposit(Player player, String bank, double amount) {
-        amount = Math.abs(amount);
-
-        try {
-            MCCom.subtract(player.getName(), amount);
-
-            double toBalance = MCCom.getBalance(bank, player.getName());
-
-            MCCom.setBalance(bank, player.getName(), toBalance + amount);
-
-            String[] args = {bank, player.getName(), amount + ""};
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageBankAccountDeposit, args));
-        } catch (NoAccountException e) {
-            if (e.getMethodCause().contains("subtract")) {
-                noAccount(player);
-            } else {
-                noAccount(player, bank);
-            }
-        } catch (NoBankException e) {
-            noBank(player, bank);
-        } catch (InsufficientFundsException e) {
-            player.sendMessage(MCLang.tag + MCFormat.color(MCLang.errorYouEnough));
-        }
-    }
-
-    /**
-     * Withdraws amount from bank account.
-     *
-     * @param player
-     * @param bank
-     * @param account
-     * @param amount
-     */
-    public static void withdraw(Player player, String bank, double amount) {
-        amount = Math.abs(amount);
-
-        try {
-            MCCom.subtract(bank, player.getName(), amount);
-
-            double toBalance = MCCom.getBalance(player.getName());          
-            MCCom.setBalance(player.getName(), toBalance - amount);
-
-            String[] args = {bank, player.getName(), amount + ""};
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageBankAccountWithdraw, args));
-        } catch (NoAccountException e) {
-            if (e.getMethodCause().contains("add")) {
-                noAccount(player);
-            } else {
-                noAccount(player, bank);
-            }
-        } catch (NoBankException e) {
-            noBank(player, bank);
-        } catch (InsufficientFundsException e) {
-            String[] args = {player.getName()};
-            player.sendMessage(MCLang.tag
-                    + MCLang.parse(MCLang.errorTheyEnough, args));
-        }
-    }
-
-    /**
-     * Empties specified bank account.
-     *
-     * @param player
-     * @param bank
-     * @param account
-     */
-    public static void empty(Player player, String bank, String account) {
-        try {
-            MCCom.empty(bank, account);
-            String[] args = {account, bank};
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageEmptyBankAccount, args));
-        } catch (NoAccountException e) {
-            noAccount(player, bank);
-        } catch (NoBankException e) {
-            noBank(player, bank);
-        }
-    }
-
-    /**
-     * Renames specified bank to specified name.
-     *
-     * @param player
-     * @param bank
-     * @param newBank
-     */
-    public static void renameBank(Player player, String bank, String newBank) {
-        String[] args = {newBank, bank};
-        try {
-            MCCom.renameBank(bank, newBank);
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageBankRenamed, args));
-        } catch (NoBankException e) {
-            noBank(player, bank);
-        } catch (BankNameConflictException e) {
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.errorBankExists, args));
-        }
-    }
-
-    /**
-     * Renames specified bank account to specified bank account.
-     *
-     * @param player
-     * @param bank
-     * @param account
-     * @param newBank
-     * @param newAccount
-     */
-    public static void rename(Player player, String bank, String account, String newBank, String newAccount) {
-        String[] args = {newAccount, newBank, account, bank};
-
-        try {
-            MCCom.rename(bank, account, newBank, newAccount);
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageBankAccountRenamed, args));
-        } catch (NoBankException e) {
-            if (e.getVariableCause().equals("oldBank")) {
-                noBank(player, bank);
-            } else {
-                noBank(player, newBank);
-            }
-        } catch (NoAccountException e) {
-            noAccount(player, bank);
-        } catch (AccountNameConflictException e) {
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.errorBankAccountExists, args));
-        }
-    }
-
-    /**
-     * Transfers specified amount between the specified bank accounts.
-     *
-     * @param player
-     * @param bank
-     * @param account
-     * @param toBank
-     * @param toAccount
-     * @param amount
-     */
-    public static void transfer(Player player, String bank, String account, String toBank, String toAccount, double amount) {
-        amount = Math.abs(amount);
-
-        try {
-            MCCom.transfer(bank, account, toBank, toAccount, amount);
-        } catch (NoBankException e) {
-            if (e.getVariableCause().equals("bankFrom")) {
-                noBank(player, bank);
-            } else {
-                noBank(player, toBank);
-            }
-        } catch (NoAccountException e) {
-            if (e.getVariableCause().equals("accountFrom")) {
-                noAccount(player, account);
-            } else {
-                noAccount(player, toAccount);
-            }
-        } catch (InsufficientFundsException e) {
-            player.sendMessage(MCLang.tag + MCFormat.color(MCLang.errorYouEnough));
-        }
+        player.sendMessage(Locales.MESSAGE_EMPTY.replace("%player%", toPlayer));
     }
 
     private static void noAccount(Player p) {
-        p.sendMessage(MCLang.tag + MCLang.errorNoAccount);
+        p.sendMessage(Locales.ERROR_NO_ACCOUNT.getString());
     }
 
-    private static void noAccount(Player p, String bank) {
-        String[] args = {bank};
-
-        p.sendMessage(MCLang.tag + MCLang.parse(MCLang.errorNoBankAccount, args));
-    }
-
-    private static void noBank(Player p, String bank) {
-        String[] args = {bank};
-
-        p.sendMessage(MCLang.tag + MCLang.parse(MCLang.errorNoBank, args));
-    }
 }
