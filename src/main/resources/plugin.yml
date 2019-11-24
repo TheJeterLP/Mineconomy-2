@@ -62,7 +62,7 @@ permissions:
          mineconomy.currency.set.others: true
    mineconomy.currency.set:
       description: Allows user set their currency.
-      default: true
+      default: op
    mineconomy.currency.set.others:
       description: Allows user to set other accounts' currencies.
       default: op
