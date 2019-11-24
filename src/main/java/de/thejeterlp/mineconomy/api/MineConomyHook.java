@@ -17,6 +17,7 @@
  */
 package de.thejeterlp.mineconomy.api;
 
+import de.thejeterlp.mineconomy.Config;
 import de.thejeterlp.mineconomy.MineConomy;
 import de.thejeterlp.mineconomy.database.AccountingBase;
 import de.thejeterlp.mineconomy.database.DatabaseFactory;
@@ -98,6 +99,10 @@ public class MineConomyHook {
      */
     public static MineConomy getPlugin() {
         return MineConomy.getInstance();
+    }
+    
+    public static String getCurrencyName() {
+        return Config.CURRENCY_NAME.getString();
     }
 
 }
