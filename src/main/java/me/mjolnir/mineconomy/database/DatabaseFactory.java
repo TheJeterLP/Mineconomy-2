@@ -48,14 +48,14 @@ public class DatabaseFactory {
             String ACCOUNT_TABLE;
             if (db.getType() == Database.Type.SQLITE) {
                 ACCOUNT_TABLE = "CREATE TABLE IF NOT EXISTS `mineconomy_accounts` ("
-                        + "`id` INTEGER PRIMARY KEY NOT NULL AUTOINCREMENT,"
-                        + "`account` varchar(64) NOT NULL,"
+                        + "`id` INTEGER PRIMARY KEY AUTOINCREMENT, "
+                        + "`account` varchar(64) NOT NULL, "
                         + "`balance` DOUBLE NOT NULL"
                         + ");";
             } else {
                 ACCOUNT_TABLE = "CREATE TABLE IF NOT EXISTS `mineconomy_accounts` ("
-                        + "`id` INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT,"
-                        + "`account` varchar(64) NOT NULL,"
+                        + "`id` INTEGER PRIMARY KEY AUTO_INCREMENT, "
+                        + "`account` varchar(64) NOT NULL, "
                         + "`balance` DOUBLE NOT NULL"
                         + ");";
             }
