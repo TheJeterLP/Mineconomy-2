@@ -1,17 +1,15 @@
 package me.mjolnir.mineconomy.internal;
 
-import com.google.common.collect.HashBiMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import me.mjolnir.mineconomy.Config;
 
 import me.mjolnir.mineconomy.MineConomy;
-import me.mjolnir.mineconomy.internal.util.IOH;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -62,22 +60,11 @@ public class Banking {
         banks = YamlConfiguration.loadConfiguration(bankFile);
         banks.options().header("=== MineConomy Banks ===\n\n    Do not edit!\n");
 
-        if (!bankFile.exists()) {
-            IOH.log("Banks file not found...", IOH.DEV);
-            Bukkit.getConsoleSender().sendMessage("�9[Mineconomy] �cBanks file not found...!");
+        if (!bankFile.exists()) {            
             banks.set("Banks", "");
-            IOH.log("Banks file created!", IOH.DEV);
-            Bukkit.getConsoleSender().sendMessage("�9[Mineconomy] �aBanks file created!");
             save();
         }
-
-        IOH.log("Loading Banks file...", IOH.DEV);
-        Bukkit.getConsoleSender().sendMessage("�9[Mineconomy] �fLoading Banks file...");
-
         reload();
-
-        IOH.log("Banks file loaded!", IOH.DEV);
-        Bukkit.getConsoleSender().sendMessage("�9[Mineconomy] �fBanks file loaded!!");
     }
 
     /**
@@ -221,7 +208,7 @@ public class Banking {
         try {
             banks.save(bankFile);
         } catch (IOException e) {
-            IOH.error("IOException", e);
+            e.printStackTrace();
         }
 
         reload();
@@ -235,8 +222,8 @@ public class Banking {
     protected static void setBalance(String bank, String account, double amount) {
         amount = (double) Math.round(amount * 100) / 100;
 
-        if (Settings.maxBalance > 0 && amount > Settings.maxBalance) {
-            amount = Settings.maxBalance;
+        if (Config.MAX_BALANCE.getDouble() > 0 && amount > Config.MAX_BALANCE.getDouble()) {
+            amount = Config.MAX_BALANCE.getDouble();
         }
 
         bankaccountbalancetemp = bankaccountbalance.get(bank);

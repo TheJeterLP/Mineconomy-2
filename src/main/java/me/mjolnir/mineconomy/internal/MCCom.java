@@ -1,10 +1,11 @@
 package me.mjolnir.mineconomy.internal;
 
+import me.mjolnir.mineconomy.database.AccountingBase;
 import java.util.List;
-
-import org.bukkit.Bukkit;
+import me.mjolnir.mineconomy.Config;
 
 import me.mjolnir.mineconomy.MineConomy;
+import me.mjolnir.mineconomy.database.DatabaseFactory;
 import me.mjolnir.mineconomy.exceptions.AccountNameConflictException;
 import me.mjolnir.mineconomy.exceptions.BankNameConflictException;
 import me.mjolnir.mineconomy.exceptions.DivideByZeroException;
@@ -13,8 +14,6 @@ import me.mjolnir.mineconomy.exceptions.MaxDebtException;
 import me.mjolnir.mineconomy.exceptions.NaturalNumberException;
 import me.mjolnir.mineconomy.exceptions.NoAccountException;
 import me.mjolnir.mineconomy.exceptions.NoBankException;
-import me.mjolnir.mineconomy.exceptions.NoCurrencyException;
-import me.mjolnir.mineconomy.internal.util.IOH;
 
 /**
  * Handles exterior classes reading/writing account values.
@@ -23,78 +22,8 @@ import me.mjolnir.mineconomy.internal.util.IOH;
  */
 public class MCCom {
 
-    private static AccountingBase accounting = null;
-
-    public static String getAccount(String account) {
-        if (accounting.hashaccount.containsKey(account.toLowerCase())) {
-            return accounting.hashaccount.get(account.toLowerCase());
-        }
-
-        Object[] accounts = accounting.treeaccount.toArray();
-
-        try {
-            return accounting.hashaccount.get(binarySearch(accounting.treeaccount.toArray(), account.toLowerCase(), 0, accounts.length - 1, ""));
-        } catch (NoAccountException ex) {
-            String result = accounting.loadAccount(account);
-            if (result != "") {
-                return result;
-            } else {
-                throw ex;
-            }
-        }
-
-    }
-
-    private static String binarySearch(Object[] array, String value, int left, int right, String ex1) {
-        if (left > right) {
-            throw new NoAccountException(ex1, "account");
-        }
-
-        int middle = (left + right) / 2;
-
-        try {
-            if (((String) array[middle]).substring(0, value.length()).equals(value)) {
-                try {
-                    if (((String) array[middle + 1]).substring(0, value.length()).equals(value)) {
-                        throw new NoAccountException(ex1, "account");
-                    }
-                } catch (IndexOutOfBoundsException e) {
-                    //
-                }
-
-                try {
-                    if (((String) array[middle - 1]).substring(0, value.length()).equals(value)) {
-                        throw new NoAccountException(ex1, "account");
-                    }
-                } catch (IndexOutOfBoundsException e) {
-                    //
-                }
-
-                return (String) array[middle];
-            }
-        } catch (StringIndexOutOfBoundsException e) {
-            //
-        }
-
-        int j = 0;
-
-        while (true) {
-            try {
-                if (((String) array[middle]).charAt(j) > value.charAt(j)) {
-                    return binarySearch(array, value, left, middle - 1, ex1);
-                }
-
-                if (((String) array[middle]).charAt(j) < value.charAt(j)) {
-                    return binarySearch(array, value, middle + 1, right, ex1);
-                }
-
-                j++;
-            } catch (StringIndexOutOfBoundsException e) {
-                return binarySearch(array, value, middle + 1, right, ex1);
-            }
-        }
-    }
-
+    private static AccountingBase accounting = DatabaseFactory.getDatabase();
+    
     // MineConomy Account Methods ----------------------------------------------
     /**
      * Returns the balance of the specified player.
@@ -104,7 +33,7 @@ public class MCCom {
      * @throws NoAccountException
      */
     public static double getBalance(String account) {
-        return accounting.getBalance(getAccount(account));
+        return accounting.getBalance(account);
     }
 
     /**
@@ -116,8 +45,7 @@ public class MCCom {
      * @throws MaxDebtException
      */
     public static void setBalance(String account, double balance) {
-        account = getAccount(account);
-        if (balance >= -Settings.maxDebt) {
+        if (balance >= -Config.MAX_DEBT.getDouble()) {
             accounting.setBalance(account, balance);
         } else {
             throw new MaxDebtException(
@@ -145,8 +73,7 @@ public class MCCom {
      * @throws NoAccountException
      */
     public static boolean canAfford(String account, double amount) {
-        account = getAccount(account);
-        return accounting.getBalance(account) + Settings.maxDebt >= amount;
+        return accounting.getBalance(account) + Config.MAX_DEBT.getDouble() >= amount;
     }
 
     /**
@@ -158,7 +85,6 @@ public class MCCom {
      */
     public static void add(String account, double amount) {
         amount = Math.abs(amount);
-        account = getAccount(account);
         accounting.setBalance(account, accounting.getBalance(account) + amount);
     }
 
@@ -172,8 +98,7 @@ public class MCCom {
      */
     public static void subtract(String account, double amount) {
         amount = Math.abs(amount);
-        account = getAccount(account);
-        if (accounting.getBalance(account) + Settings.maxDebt >= amount) {
+        if (accounting.getBalance(account) + Config.MAX_DEBT.getDouble() >= amount) {
             accounting.setBalance(account, accounting.getBalance(account) - amount);
         } else {
             throw new InsufficientFundsException(
@@ -192,7 +117,6 @@ public class MCCom {
      */
     public static void multiply(String account, double multiplier) {
         multiplier = Math.abs(multiplier);
-        account = getAccount(account);
         accounting.setBalance(account, accounting.getBalance(account) * multiplier);
     }
 
@@ -207,8 +131,7 @@ public class MCCom {
      */
     public static void divide(String account, double divisor) {
         divisor = Math.abs(divisor);
-        account = getAccount(account);
-        if (accounting.getBalance(account) / divisor >= Settings.maxDebt) {
+        if (accounting.getBalance(account) / divisor >= Config.MAX_DEBT.getDouble()) {
             if (divisor > 0) {
                 accounting.setBalance(account, accounting.getBalance(account) / divisor);
             } else {
@@ -229,7 +152,6 @@ public class MCCom {
      * @throws NoAccountException
      */
     public static void empty(String account) {
-        account = getAccount(account);
         accounting.setBalance(account, 0);
     }
 
@@ -252,7 +174,6 @@ public class MCCom {
      * @throws NoAccountException
      */
     public static void delete(String account) {
-        account = getAccount(account);
         accounting.delete(account);
     }
 
@@ -267,9 +188,7 @@ public class MCCom {
      * @throws InsufficientFundsException
      */
     public static void transfer(String accountFrom, String accountTo, double amount) {
-        accountFrom = getAccount(accountFrom);
-        accountTo = getAccount(accountTo);
-        if (accounting.getBalance(accountTo) + Settings.maxDebt >= amount) {
+        if (accounting.getBalance(accountTo) + Config.MAX_DEBT.getDouble() >= amount) {
             accounting.setBalance(accountFrom,
                     accounting.getBalance(accountFrom) - amount);
             accounting.setBalance(accountTo,
@@ -698,6 +617,7 @@ public class MCCom {
 
     /**
      * Returns the balance of the specified account.
+     *
      * @param account
      * @return Balance
      */
@@ -707,6 +627,7 @@ public class MCCom {
 
     /**
      * Sets the specified account's balance to the specified amount.
+     *
      * @param account
      * @param balance
      */
@@ -722,18 +643,6 @@ public class MCCom {
      */
     public static AccountingBase getAccounting() {
         return accounting;
-    }
-
-    /**
-     * Initializes MCCom base classes. (Required for SQL)
-     */
-    public static void initialize() {
-        if (Settings.dbtype.equalsIgnoreCase("mysql")) {
-            IOH.log("MySQL is enabled for Accounts.", IOH.DEV);
-            Bukkit.getConsoleSender().sendMessage("�9[Mineconomy] �fMySQL is enabled for Accounts.");
-            accounting = new MySqlAccounting();
-        }
-        IOH.log("MySQL is not yet configured! Plugin will NOT work!", IOH.VERY_IMPORTANT);
     }
 
     /**

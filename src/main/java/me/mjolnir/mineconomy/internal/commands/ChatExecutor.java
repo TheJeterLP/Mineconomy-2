@@ -36,7 +36,7 @@ public class ChatExecutor implements CommandExecutor {
                         } else if (args[0].equalsIgnoreCase("create")) {
                             try {
                                 MCCom.create(args[1]);
-                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageCreated, new String[]{MCCom.getAccount(args[1])}));
+                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageCreated, new String[]{args[1]}));
                             } catch (AccountNameConflictException e) {
                                 sender.sendMessage(MCLang.tag
                                         + MCLang.parse(MCLang.errorAccountExists, new String[]{args[1]}));
@@ -44,7 +44,7 @@ public class ChatExecutor implements CommandExecutor {
                         } else if (args[0].equalsIgnoreCase("delete")) {
                             try {
                                 MCCom.delete(args[1]);
-                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageDeleted, new String[]{MCCom.getAccount(args[1])}));
+                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageDeleted, new String[]{args[1]}));
                             } catch (NoAccountException e) {
                                 sender.sendMessage(MCLang.tag
                                         + MCLang.errorNoAccount);
@@ -52,7 +52,7 @@ public class ChatExecutor implements CommandExecutor {
                         } else if (args[0].equalsIgnoreCase("empty")) {
                             try {
                                 MCCom.empty(args[1]);
-                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageEmpty, new String[]{MCCom.getAccount(args[1])}));
+                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageEmpty, new String[]{args[1]}));
                             } catch (NoAccountException e) {
                                 sender.sendMessage(MCLang.tag
                                         + MCLang.errorNoAccount);
@@ -66,7 +66,7 @@ public class ChatExecutor implements CommandExecutor {
                             try {
                                 MCCom.setBalance(args[1],
                                         Double.parseDouble(args[2]));
-                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageSetBalance, new String[]{MCCom.getAccount(args[1]), MCCom.getBalance(args[1]) + ""}));
+                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageSetBalance, new String[]{args[1], MCCom.getBalance(args[1]) + ""}));
                             } catch (NumberFormatException e) {
                                 sender.sendMessage(MCLang.tag
                                         + MCLang.errorMoneyFormat);
@@ -80,7 +80,7 @@ public class ChatExecutor implements CommandExecutor {
                         } else if (args[0].equalsIgnoreCase("give")) {
                             try {
                                 MCCom.add(args[1], Double.parseDouble(args[2]));
-                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageGive, new String[]{MCCom.getAccount(args[1]), Double.parseDouble(args[2]) + ""}));
+                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageGive, new String[]{args[1], Double.parseDouble(args[2]) + ""}));
                             } catch (NumberFormatException e) {
                                 sender.sendMessage(MCLang.tag
                                         + MCLang.errorMoneyFormat);
@@ -92,7 +92,7 @@ public class ChatExecutor implements CommandExecutor {
                             try {
                                 MCCom.subtract(args[1],
                                         Double.parseDouble(args[2]));
-                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageTook, new String[]{Double.parseDouble(args[2]) + "", MCCom.getAccount(args[1])}));
+                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageTook, new String[]{Double.parseDouble(args[2]) + "", args[1]}));
                             } catch (NumberFormatException e) {
                                 sender.sendMessage(MCLang.tag
                                         + MCLang.errorMoneyFormat);
@@ -101,7 +101,7 @@ public class ChatExecutor implements CommandExecutor {
                                         + MCLang.errorNoAccount);
                             } catch (InsufficientFundsException e) {
                                 sender.sendMessage(MCLang.tag
-                                        + MCLang.parse(MCLang.errorTheyEnough, new String[]{MCCom.getAccount(args[1])}));
+                                        + MCLang.parse(MCLang.errorTheyEnough, new String[]{args[1]}));
                             }
                         } else {
                             sender.sendMessage(MCLang.tag

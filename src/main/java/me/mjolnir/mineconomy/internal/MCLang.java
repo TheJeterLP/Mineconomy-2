@@ -4,10 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import me.mjolnir.mineconomy.MineConomy;
-import me.mjolnir.mineconomy.internal.util.IOH;
 import me.mjolnir.mineconomy.internal.util.MCFormat;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -16,7 +14,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
  *
  * @author MjolnirCommando
  */
-@SuppressWarnings("javadoc")
 public class MCLang {
 
     private static String langtag = "MineConomy";
@@ -70,7 +67,7 @@ public class MCLang {
     public static String messageHelp2 = "<br>&a===== MineConomy Help Page 2/3 =====<br>&7/mc deposit <TYPE> <AMOUNT> &f- deposits specified amount of physical currency into your account.<br>&7/mc withdraw <TYPE> <AMOUNT> &f- withdraws specified amount of physical currency from your account.<br>&7/mc setcurrency (ACCOUNT) <CURRENCY> &f- sets the specified account's currency.<br>&7/mcb <BANK> &f- displays your balance in the specified bank.<br>&7/mcb balance <BANK> &f- displays your balance in the specified bank.<br>&7/mcb create <BANK> (ACCOUNT) &f- creates new bank/bank account.<br>&7/mcb delete <BANK> (ACCOUNT) &f- deletes specified bank/bank account.<br>&7/mcb get <BANK> <ACCOUNT> &f- displays the balance of specified bank account.<br>&7/mcb set <BANK> <ACCOUNT> &f- sets the balance of specified bank account.";
     public static String messageHelp3 = "<br>&a===== MineConomy Help Page 3/3 =====<br>&7/mcb empty <BANK> <ACCOUNT> &f- empties the specified bank account.<br>&7/mcb rename <BANK> (ACCOUNT) <NEW_BANK> (NEW_ACCOUNT) &f- renames the specified bank/bank account.<br>&7/mcb transfer <BANK> (ACCOUNT) <TO_BANK> <TO_ACCOUNT> <AMOUNT> &f- transfers the specified amount from bank account to bank account.<br>&7/mcb join <BANK> &f- joins specified bank.<br>&7/mcb leave <BANK> &f- leaves specified bank.<br>&7/mcb deposit <BANK> <AMOUNT> &f- deposits amount in your account.<br>&7/mcb withdraw <BANK> <AMOUNT> &f- withdraws amount from your account.";
 
-    public static File langFile = new File(MineConomy.getInstance().getDataFolder(), "lang/"+ "lang-" + Settings.lang + ".yml");
+    private static final File langFile = new File(MineConomy.getInstance().getDataFolder(), "locales.yml");
     private static YamlConfiguration lang;
 
     public static void load() {
@@ -80,8 +77,6 @@ public class MCLang {
                 .header("=== MineConomy Language ===\n\n    \n");
 
         if (!langFile.exists()) {
-            IOH.log("Language file not found...", IOH.DEV);
-            Bukkit.getConsoleSender().sendMessage("�9[Mineconomy] �cLanguage file not found...");
             lang.set("Lang", "");
             lang.set("Lang.Tag", langtag);
             lang.set("Lang.Message.Welcome Message", welcomeMessage);
@@ -128,19 +123,9 @@ public class MCLang {
             lang.set("Lang.Message.Help.Page 1", messageHelp1);
             lang.set("Lang.Message.Help.Page 2", messageHelp2);
             lang.set("Lang.Message.Help.Page 3", messageHelp3);
-
-            IOH.log("Language file created!", IOH.DEV);
-            Bukkit.getConsoleSender().sendMessage("�9[Mineconomy] �aLanguage file created!");
             save();
         }
-
-        IOH.log("Loading Language file...", IOH.DEV);
-        Bukkit.getConsoleSender().sendMessage("�9[Mineconomy] �fLoading Language file...");
-
         reload();
-
-        IOH.log("Language file loaded!", IOH.DEV);
-        Bukkit.getConsoleSender().sendMessage("�9[Mineconomy] �fLanguage file loaded!");
     }
 
     public static void reload() {
@@ -203,33 +188,33 @@ public class MCLang {
 
     public static void save() {
         lang.set("Lang", "");
-        lang.set("Lang.Tag", MCFormat.decolor(langtag));
-        lang.set("Lang.Message.Welcome Message", MCFormat.decolor(welcomeMessage));
-        lang.set("Lang.Message.Welcome Account Created", MCFormat.decolor(messageWelcomeAccountCreated));
-        lang.set("Lang.Message.Account Balance", MCFormat.decolor(messageAccountBalance));
-        lang.set("Lang.Message.Bank Balance", MCFormat.decolor(messageBankBalance));
-        lang.set("Lang.Error.Permission.Have Account", MCFormat.decolor(errorPermissionHaveAccount));
-        lang.set("Lang.Error.Permission.Generic", MCFormat.decolor(errorPermissionGeneric));
-        lang.set("Lang.Error.Int", MCFormat.decolor(errorInt));
-        lang.set("Lang.Error.Invalid Args", MCFormat.decolor(errorInvalidArgs));
-        lang.set("Lang.Error.Command.Recognition", MCFormat.decolor(errorCommandRecognition));
-        lang.set("Lang.Message.Currency Set", MCFormat.decolor(messageCurrencySet));
-        lang.set("Lang.Message.Get Balance", MCFormat.decolor(messageGetBalance));
-        lang.set("Lang.Message.Set Balance", MCFormat.decolor(messageSetBalance));
-        lang.set("Lang.Error.Max Debt", MCFormat.decolor(errorMaxDebt));
-        lang.set("Lang.Message.Give", MCFormat.decolor(messageGive));
-        lang.set("Lang.Error.They Enough", MCFormat.decolor(errorTheyEnough));
-        lang.set("Lang.Error.You Enough", MCFormat.decolor(errorYouEnough));
-        lang.set("Lang.Message.Payed To", MCFormat.decolor(messagePayedTo));
-        lang.set("Lang.Message.Payed From", MCFormat.decolor(messagePayedFrom));
-        lang.set("Lang.Message.Took", MCFormat.decolor(messageTook));
-        lang.set("Lang.Message.Empty", MCFormat.decolor(messageEmpty));
-        lang.set("Lang.Message.Account Created", MCFormat.decolor(messageCreated));
-        lang.set("Lang.Error.Account Exists", MCFormat.decolor(errorAccountExists));
-        lang.set("Lang.Message.Account Deleted", MCFormat.decolor(messageDeleted));
-        lang.set("Lang.Error.No Account", MCFormat.decolor(errorNoAccount));
-        lang.set("Lang.Error.No Bank", MCFormat.decolor(errorNoBank));
-        lang.set("Lang.Error.No Bank Account", MCFormat.decolor(errorNoBankAccount));
+        lang.set("Lang.Tag", langtag);
+        lang.set("Lang.Message.Welcome Message", welcomeMessage);
+        lang.set("Lang.Message.Welcome Account Created", messageWelcomeAccountCreated);
+        lang.set("Lang.Message.Account Balance", messageAccountBalance);
+        lang.set("Lang.Message.Bank Balance", messageBankBalance);
+        lang.set("Lang.Error.Permission.Have Account", errorPermissionHaveAccount);
+        lang.set("Lang.Error.Permission.Generic", errorPermissionGeneric);
+        lang.set("Lang.Error.Int", errorInt);
+        lang.set("Lang.Error.Invalid Args", errorInvalidArgs);
+        lang.set("Lang.Error.Command.Recognition", errorCommandRecognition);
+        lang.set("Lang.Message.Currency Set", messageCurrencySet);
+        lang.set("Lang.Message.Get Balance", messageGetBalance);
+        lang.set("Lang.Message.Set Balance", messageSetBalance);
+        lang.set("Lang.Error.Max Debt", errorMaxDebt);
+        lang.set("Lang.Message.Give", messageGive);
+        lang.set("Lang.Error.They Enough", errorTheyEnough);
+        lang.set("Lang.Error.You Enough", errorYouEnough);
+        lang.set("Lang.Message.Payed To", messagePayedTo);
+        lang.set("Lang.Message.Payed From", messagePayedFrom);
+        lang.set("Lang.Message.Took", messageTook);
+        lang.set("Lang.Message.Empty", messageEmpty);
+        lang.set("Lang.Message.Account Created", messageCreated);
+        lang.set("Lang.Error.Account Exists", errorAccountExists);
+        lang.set("Lang.Message.Account Deleted", messageDeleted);
+        lang.set("Lang.Error.No Account", errorNoAccount);
+        lang.set("Lang.Error.No Bank", errorNoBank);
+        lang.set("Lang.Error.No Bank Account", errorNoBankAccount);
         lang.set("Lang.Message.Bank Created", MCFormat.decolor(messageBankCreated));
         lang.set("Lang.Error.Bank Exists", MCFormat.decolor(errorBankExists));
         lang.set("Lang.Message.Bank Deleted", MCFormat.decolor(messageBankDeleted));
@@ -252,7 +237,7 @@ public class MCLang {
         try {
             lang.save(langFile);
         } catch (IOException e) {
-            IOH.error("IOException", e);
+            e.printStackTrace();
         }
 
         reload();

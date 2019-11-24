@@ -1,14 +1,11 @@
 package me.mjolnir.mineconomy;
 
-import java.io.File;
+import java.util.logging.Level;
+import me.mjolnir.mineconomy.database.DatabaseFactory;
 import me.mjolnir.mineconomy.internal.Banking;
-import me.mjolnir.mineconomy.internal.MCCom;
 import me.mjolnir.mineconomy.internal.MCLang;
-import me.mjolnir.mineconomy.internal.Settings;
 import me.mjolnir.mineconomy.internal.commands.ChatExecutor;
 import me.mjolnir.mineconomy.internal.listeners.MCListener;
-import me.mjolnir.mineconomy.internal.util.IOH;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class MineConomy extends JavaPlugin {
@@ -18,14 +15,13 @@ public class MineConomy extends JavaPlugin {
     @Override
     public void onEnable() {
         INSTANCE = this;
-        IOH.loadLog();
+        log("Enabling plugin...");
 
-        IOH.log("Enabling plugin...", IOH.DEV);
-        Bukkit.getConsoleSender().sendMessage("§9[Mineconomy] §aEnabling plugin...!");
-
-        getDataFolder().mkdirs();
-
-        load();
+        Config.load();
+        DatabaseFactory.init();
+        
+        Banking.load();
+        MCLang.load();
 
         saveResource("README.txt", true);
 
@@ -37,43 +33,25 @@ public class MineConomy extends JavaPlugin {
         getCommand("money").setExecutor(executor);
         getCommand("mcb").setExecutor(executor);
 
-        IOH.log("Version " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " is enabled!", IOH.IMPORTANT);
+        log("Version " + getDescription().getVersion() + " by " + getDescription().getAuthors() + " is enabled!");
 
     }
 
     @Override
     public void onDisable() {
-        IOH.log("Disabling MineConomy...", IOH.INFO);
+        log("Disabling MineConomy...");
 
-        save();
-        IOH.log("MineConomy is disabled.", IOH.IMPORTANT);
-    }
-
-    private void load() {
-        Settings.load();
-        MCCom.initialize();
-        MCCom.getAccounting().load();
-        Banking.load();
-        MCLang.langFile = new File(getDataFolder(), "lang/" + "lang-" + Settings.lang + ".yml");
-        MCLang.load();
-    }
-
-    public void reload() {
-        MCCom.getAccounting().reload();
-        Banking.reload();
-        Settings.reload();
-        MCLang.reload();
-    }
-
-    public void save() {
-        MCCom.getAccounting().save();
         Banking.save();
-        Settings.save();
         MCLang.save();
-        IOH.saveLog();
-    }
 
+        log("MineConomy is disabled.");
+    }
+    
     public static MineConomy getInstance() {
         return INSTANCE;
+    }
+
+    public static void log(String msg) {
+        INSTANCE.getLogger().log(Level.INFO, msg);
     }
 }

@@ -1,7 +1,5 @@
 package me.mjolnir.mineconomy.internal.commands;
 
-import java.util.ArrayList;
-import java.util.List;
 import me.mjolnir.mineconomy.MineConomy;
 import me.mjolnir.mineconomy.exceptions.AccountNameConflictException;
 import me.mjolnir.mineconomy.exceptions.BankNameConflictException;
@@ -78,14 +76,7 @@ public class Balance {
      * @param toPlayer
      */
     public static void get(Player player, String toPlayer) {
-        try {
-            toPlayer = MCCom.getAccount(toPlayer);
-        } catch (NoAccountException e) {
-            noAccount(player);
-            return;
-        }
         String[] args = {toPlayer, MCCom.getBalance(toPlayer) + ""};
-
         player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageGetBalance, args));
     }
 
@@ -97,12 +88,6 @@ public class Balance {
      * @param amount
      */
     public static void set(Player player, String toPlayer, double amount) {
-        try {
-            toPlayer = MCCom.getAccount(toPlayer);
-        } catch (NoAccountException e) {
-            noAccount(player);
-            return;
-        }
         try {
             MCCom.setBalance(toPlayer, amount);
 
@@ -123,22 +108,9 @@ public class Balance {
      */
     public static void pay(Player player, String toPlayer, double payAmount) {
         String name = player.getName();
-        try {
-            name = MCCom.getAccount(name);
-        } catch (NoAccountException e) {
-            noAccount(player);
-            return;
-        }
         double balance = MCCom.getBalance(name);
         double amount = Math.abs(payAmount);
-
-        try {
-            toPlayer = MCCom.getAccount(toPlayer);
-        } catch (NoAccountException e) {
-            noAccount(player);
-            return;
-        }
-
+        
         if (MCCom.canAfford(name, amount)) {
             MCCom.setBalance(name, balance - amount);
             double toBalance = MCCom.getBalance(toPlayer);
@@ -171,13 +143,7 @@ public class Balance {
      * @param toPlayer
      * @param payAmount
      */
-    public static void give(Player player, String toPlayer, String payAmount) {
-        try {
-            toPlayer = MCCom.getAccount(toPlayer);
-        } catch (NoAccountException e) {
-            noAccount(player);
-            return;
-        }
+    public static void give(Player player, String toPlayer, String payAmount) {        
         double amount = Double.parseDouble(payAmount);
         amount += MCCom.getBalance(toPlayer);
         MCCom.setBalance(toPlayer, amount);
@@ -194,13 +160,7 @@ public class Balance {
      * @param toPlayer
      * @param takeAmount
      */
-    public static void take(Player player, String toPlayer, String takeAmount) {
-        try {
-            toPlayer = MCCom.getAccount(toPlayer);
-        } catch (NoAccountException e) {
-            noAccount(player);
-            return;
-        }
+    public static void take(Player player, String toPlayer, String takeAmount) {        
         double amount = Double.parseDouble(takeAmount);
         double balance = MCCom.getBalance(toPlayer);
         if (MCCom.canAfford(toPlayer, amount)) {
@@ -223,13 +183,7 @@ public class Balance {
      * @param player
      * @param toPlayer
      */
-    public static void empty(Player player, String toPlayer) {
-        try {
-            toPlayer = MCCom.getAccount(toPlayer);
-        } catch (NoAccountException e) {
-            noAccount(player);
-            return;
-        }
+    public static void empty(Player player, String toPlayer) {      
         MCCom.setBalance(toPlayer, 0);
         try {
             String[] args = {toPlayer};
@@ -265,13 +219,7 @@ public class Balance {
      * @param player
      * @param toPlayer
      */
-    public static void delete(Player player, String toPlayer) {
-        try {
-            toPlayer = MCCom.getAccount(toPlayer);
-        } catch (NoAccountException e) {
-            noAccount(player);
-            return;
-        }
+    public static void delete(Player player, String toPlayer) {        
         MCCom.delete(toPlayer);
 
         String[] args = {toPlayer};
