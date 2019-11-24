@@ -88,7 +88,7 @@ public class Balance {
     public static void set(Player player, String toPlayer, double amount) {
         OfflinePlayer op = Bukkit.getOfflinePlayer(toPlayer);
         MCCom.setBalance(op.getUniqueId(), amount);
-        player.sendMessage(Locales.MESSAGE_BALANCE_SET.replace("%amount%", MCCom.getBalance(op.getUniqueId()) + "").replaceAll("%player%", toPlayer));
+        player.sendMessage(Locales.MESSAGE_BALANCE_SET.replace("%balance%", MCCom.getBalance(op.getUniqueId()) + "").replaceAll("%player%", toPlayer));
     }
 
     /**
