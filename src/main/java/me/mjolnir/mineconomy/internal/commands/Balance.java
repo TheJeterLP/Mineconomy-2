@@ -1,7 +1,7 @@
 package me.mjolnir.mineconomy.internal.commands;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.List;
 import me.mjolnir.mineconomy.MineConomy;
 import me.mjolnir.mineconomy.exceptions.AccountNameConflictException;
 import me.mjolnir.mineconomy.exceptions.BankNameConflictException;
@@ -13,7 +13,6 @@ import me.mjolnir.mineconomy.internal.MCCom;
 import me.mjolnir.mineconomy.internal.MCLang;
 import me.mjolnir.mineconomy.internal.util.MCFormat;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 /**
  * Keeps MCCommandExecutor code neater.
@@ -31,12 +30,18 @@ public class Balance {
     public static void help(Player player, int page) {
         String pgcontent = "";
 
-        if (page == 1) {
-            pgcontent = MCLang.messageHelp1;
-        } else if (page == 2) {
-            pgcontent = MCLang.messageHelp2;
-        } else if (page == 3) {
-            pgcontent = MCLang.messageHelp3;
+        switch (page) {
+            case 1:
+                pgcontent = MCLang.messageHelp1;
+                break;
+            case 2:
+                pgcontent = MCLang.messageHelp2;
+                break;
+            case 3:
+                pgcontent = MCLang.messageHelp3;
+                break;
+            default:
+                break;
         }
 
         String[] breaks = pgcontent.split("<br>");
@@ -61,26 +66,9 @@ public class Balance {
             return;
         }
 
-        String[] args = {MCCom.getCurrency(player.getName()), balance + ""};
+        String[] args = {balance + ""};
 
         player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageAccountBalance, args));
-    }
-
-    /**
-     * Checks the player's experience points.
-     *
-     * @param player
-     */
-    public static void checkexp(Player player) {
-        DecimalFormat dec = new DecimalFormat("####");
-        int currentLevel = player.getLevel() * 100;
-        String currentExp = dec.format(player.getExp() * 100.0F);
-        int totalXP = Integer.valueOf(currentLevel).intValue()
-                + Integer.valueOf(currentExp).intValue();
-
-        String[] args = {MCFormat.format(totalXP, false)};
-
-        player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageExpCheck, args));
     }
 
     /**
@@ -96,18 +84,9 @@ public class Balance {
             noAccount(player);
             return;
         }
-//        boolean HasAccount = MCCom.exists(toPlayer);
-//
-//        if (HasAccount)
-//        {
-        String[] args = {toPlayer, MCCom.getBalance(toPlayer) + "", MCCom.getCurrency(toPlayer)};
+        String[] args = {toPlayer, MCCom.getBalance(toPlayer) + ""};
 
         player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageGetBalance, args));
-//        }
-//        else
-//        {
-//            noAccount(player);
-//        }
     }
 
     /**
@@ -124,25 +103,15 @@ public class Balance {
             noAccount(player);
             return;
         }
-//        boolean HasAccount = MCCom.exists(toPlayer);
-//
-//        if (HasAccount)
-//        {
         try {
             MCCom.setBalance(toPlayer, amount);
 
-            String[] args = {toPlayer, MCCom.getBalance(toPlayer) + "", MCCom.getCurrency(player.getName())};
+            String[] args = {toPlayer, MCCom.getBalance(toPlayer) + ""};
 
             player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageSetBalance, args));
         } catch (MaxDebtException e) {
             player.sendMessage(MCLang.tag + MCLang.errorMaxDebt);
         }
-
-//        }
-//        else
-//        {
-//            noAccount(player);
-//        }
     }
 
     /**
@@ -160,10 +129,6 @@ public class Balance {
             noAccount(player);
             return;
         }
-
-//        boolean hasAccount = MCCom.exists(player.getName());
-//        if (hasAccount)
-//        {
         double balance = MCCom.getBalance(name);
         double amount = Math.abs(payAmount);
 
@@ -173,38 +138,23 @@ public class Balance {
             noAccount(player);
             return;
         }
-//            boolean toHasAccount = MCCom.exists(toPlayer);
-//            if (toHasAccount == true)
-//            {
 
         if (MCCom.canAfford(name, amount)) {
-            double newBalance = balance - amount;
-            MCCom.setBalance(name, newBalance);
+            MCCom.setBalance(name, balance - amount);
             double toBalance = MCCom.getBalance(toPlayer);
+            
+            MCCom.setBalance(toPlayer, toBalance + amount);
 
-            double value = MCCom.getCurrencyValue(MCCom
-                    .getCurrency(name));
-            double toValue = MCCom.getCurrencyValue(MCCom
-                    .getCurrency(toPlayer));
-
-            double base = amount / value;
-            base = base * toValue;
-
-            double newToBalance = toBalance + base;
-            MCCom.setBalance(toPlayer, newToBalance);
-
-            String[] args = {amount + "", MCCom.getCurrency(name), toPlayer};
+            String[] args = {amount + "", toPlayer};
 
             player.sendMessage(MCLang.tag
                     + MCLang.parse(MCLang.messagePayedTo, args));
             try {
-                Player reciever = MineConomy.plugin.getServer()
-                        .getPlayer(toPlayer);
+                Player reciever = MineConomy.getInstance().getServer().getPlayer(toPlayer);
 
-                String[] args2 = {name, amount + "", MCCom.getCurrency(name)};
+                String[] args2 = {name, amount + ""};
 
-                reciever.sendMessage(MCLang.tag
-                        + MCLang.parse(MCLang.messagePayedFrom, args2));
+                reciever.sendMessage(MCLang.tag + MCLang.parse(MCLang.messagePayedFrom, args2));
             } catch (NullPointerException e) {
                 //IOH.error("NullPointerException", e); In case player is offline
             }
@@ -212,12 +162,6 @@ public class Balance {
             player.sendMessage(MCLang.tag
                     + MCLang.errorYouEnough);
         }
-//            }
-//            else
-//            {
-//                noAccount(player);
-//            }
-//        }
     }
 
     /**
@@ -234,22 +178,13 @@ public class Balance {
             noAccount(player);
             return;
         }
-//        boolean HasAccount = MCCom.exists(toPlayer);
-//
-//        if (HasAccount)
-//        {
         double amount = Double.parseDouble(payAmount);
         amount += MCCom.getBalance(toPlayer);
         MCCom.setBalance(toPlayer, amount);
 
-        String[] args = {toPlayer, payAmount, MCCom.getCurrency(player.getName())};
+        String[] args = {toPlayer, payAmount};
 
         player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageGive, args));
-//        }
-//        else
-//        {
-//            noAccount(player);
-//        }
     }
 
     /**
@@ -266,16 +201,12 @@ public class Balance {
             noAccount(player);
             return;
         }
-//        boolean HasAccount = MCCom.exists(toPlayer);
-//
-//        if (HasAccount)
-//        {
         double amount = Double.parseDouble(takeAmount);
         double balance = MCCom.getBalance(toPlayer);
         if (MCCom.canAfford(toPlayer, amount)) {
             MCCom.setBalance(toPlayer, balance - amount);
 
-            String[] args = {amount + "", MCCom.getCurrency(player.getName()), toPlayer};
+            String[] args = {amount + "", toPlayer};
 
             player.sendMessage(MCLang.tag
                     + MCLang.parse(MCLang.messageTook, args));
@@ -284,11 +215,6 @@ public class Balance {
             player.sendMessage(MCLang.tag
                     + MCLang.parse(MCLang.errorTheyEnough, args));
         }
-//        }
-//        else
-//        {
-//            noAccount(player);
-//        }
     }
 
     /**
@@ -304,10 +230,6 @@ public class Balance {
             noAccount(player);
             return;
         }
-//        boolean HasAccount = MCCom.exists(toPlayer);
-//
-//        if (HasAccount)
-//        {
         MCCom.setBalance(toPlayer, 0);
         try {
             String[] args = {toPlayer};
@@ -317,11 +239,6 @@ public class Balance {
         } catch (NullPointerException e) {
             // IGNORE
         }
-//        }
-//        else
-//        {
-//            noAccount(player);
-//        }
     }
 
     /**
@@ -355,281 +272,13 @@ public class Balance {
             noAccount(player);
             return;
         }
-//        boolean HasAccount = MCCom.exists(toPlayer);
-//
-//        if (HasAccount)
-//        {
         MCCom.delete(toPlayer);
 
         String[] args = {toPlayer};
 
-        player.sendMessage(MCLang.tag
-                + MCLang.parse(MCLang.messageDeleted, args));
-//        }
-//        else
-//        {
-//            noAccount(player);
-//        }
+        player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageDeleted, args));
     }
-
-    /**
-     * Deposits the specified amount of physical currency into specified
-     * account.
-     *
-     * @param player
-     * @param currency
-     * @param amount
-     */
-    public static void deposit(Player player, String currency, int amount) {
-        String name = player.getName();
-        try {
-            name = MCCom.getAccount(name);
-        } catch (NoAccountException e) {
-            noAccount(player);
-            return;
-        }
-//        boolean HasAccount = MCCom.exists(player.getName());
-//
-//        if (HasAccount)
-//        {
-        if (MCCom.physicalCurrencyExists(currency)) {
-            if (MCCom.idExists("_exp")) {
-                String expcurrency = MCCom.getCurrencyById("_exp");
-
-                if (currency.equals(expcurrency)) {
-                    double balance = MCCom.getBalance(name);
-
-                    DecimalFormat dec = new DecimalFormat("####");
-                    int currentLevel = player.getLevel() * 100;
-                    String currentExp = dec
-                            .format(player.getExp() * 100.0F);
-                    int totalXP = Integer.valueOf(currentLevel).intValue()
-                            + Integer.valueOf(currentExp).intValue();
-
-                    if (totalXP >= amount) {
-                        double value = MCCom.getCurrencyValue(MCCom
-                                .getAccountCurrency(name));
-                        double physvalue = MCCom
-                                .getPhysicalCurrencyValue(expcurrency);
-
-                        double base = amount * physvalue;
-                        base = base / value;
-
-                        MCCom.setBalance(name, balance + base);
-
-                        int left = Integer.valueOf(totalXP).intValue()
-                                - amount;
-                        int LVLleft = left / 100;
-                        int EXP = Integer.valueOf(left).intValue() % 100;
-                        float EXPleft = EXP / 100.0F;
-                        player.setLevel(LVLleft);
-                        player.setExp(EXPleft);
-
-                        player.sendMessage(MCLang.tag + MCLang.messageTransactionComplete);
-                        return;
-                    } else {
-                        player.sendMessage(MCLang.tag + MCLang.errorExpEnough);
-                        return;
-                    }
-                }
-            }
-
-            String id = MCCom.getCurrencyId(currency);
-            ItemStack is;
-            if (id.contains(":")) {
-                is = new ItemStack(Integer.parseInt(id.split(":")[0]));
-                is.setDurability(Short.parseShort(id.split(":")[1]));
-            } else {
-                is = new ItemStack(Integer.parseInt(id));
-            }
-
-            if (player.getInventory().containsAtLeast(is, amount)) {
-                double value = MCCom.getCurrencyValue(MCCom
-                        .getAccountCurrency(name));
-                double physvalue = MCCom.getPhysicalCurrencyValue(currency);
-
-                double base = amount * physvalue;
-                base = base / value;
-
-                MCCom.setBalance(name,
-                        MCCom.getBalance(name) + base);
-
-                is.setAmount(amount);
-                player.getInventory().removeItem(new ItemStack[]{is});
-
-                return;
-            } else {
-                player.sendMessage(MCLang.tag + MCLang.errorYouEnough);
-                return;
-            }
-        } else {
-            player.sendMessage(MCLang.tag + MCLang.errorNoPhysicalCurrency);
-        }
-//        }
-//        else
-//        {
-//            noAccount(player);
-//        }
-    }
-
-    /**
-     * Withdraws the specified amount of exp from specified account.
-     *
-     * @param player
-     * @param currency
-     * @param amount
-     */
-    public static void withdraw(Player player, String currency, int amount) {
-        String name = player.getName();
-        try {
-            name = MCCom.getAccount(name);
-        } catch (NoAccountException e) {
-            noAccount(player);
-            return;
-        }
-//        boolean HasAccount = MCCom.exists(player.getName());
-//
-//        if (HasAccount)
-//        {
-        if (MCCom.physicalCurrencyExists(currency)) {
-            if (MCCom.idExists("_exp")) {
-                String expcurrency = MCCom.getCurrencyById("_exp");
-
-                if (currency.equals(expcurrency)) {
-                    double balance = MCCom.getBalance(name);
-
-                    DecimalFormat dec = new DecimalFormat("####");
-                    int currentLevel = player.getLevel() * 100;
-                    String currentExp = dec
-                            .format(player.getExp() * 100.0F);
-                    int totalXP = Integer.valueOf(currentLevel).intValue()
-                            + Integer.valueOf(currentExp).intValue();
-
-                    try {
-                        double value = MCCom.getCurrencyValue(MCCom
-                                .getAccountCurrency(name));
-                        double physvalue = MCCom
-                                .getPhysicalCurrencyValue(expcurrency);
-
-                        double base = amount * physvalue;
-                        base = base / value;
-
-                        MCCom.setBalance(name, balance - base);
-
-                        int left = Integer.valueOf(totalXP).intValue()
-                                + amount;
-                        int LVLleft = left / 100;
-                        int EXP = Integer.valueOf(left).intValue() % 100;
-                        float EXPleft = EXP / 100.0F;
-                        player.setLevel(LVLleft);
-                        player.setExp(EXPleft);
-
-                        player.sendMessage(MCLang.tag + MCLang.messageTransactionComplete);
-                        return;
-                    } catch (MaxDebtException e) {
-                        player.sendMessage(MCLang.tag + MCLang.errorYouEnough);
-                        return;
-                    }
-                }
-            }
-
-            double balance = MCCom.getBalance(name);
-
-            try {
-                double value = MCCom.getCurrencyValue(MCCom
-                        .getAccountCurrency(name));
-                double physvalue = MCCom.getPhysicalCurrencyValue(currency);
-
-                double base = amount * physvalue;
-                base = base / value;
-
-                MCCom.setBalance(name, balance - base);
-
-                String id = MCCom.getCurrencyId(currency);
-
-                ItemStack is;
-                if (id.contains(":")) {
-                    is = new ItemStack(Integer.parseInt(id.split(":")[0]));
-                    is.setDurability(Short.parseShort(id.split(":")[1]));
-                } else {
-                    is = new ItemStack(Integer.parseInt(id));
-                }
-                is.setAmount(amount);
-
-                player.getInventory().addItem(is);
-                return;
-            } catch (MaxDebtException e) {
-                player.sendMessage(MCLang.tag + MCLang.errorYouEnough);
-                return;
-            }
-        } else {
-            player.sendMessage(MCLang.tag + MCLang.errorNoPhysicalCurrency);
-        }
-//        }
-//        else
-//        {
-//            noAccount(player);
-//        }
-    }
-
-    /**
-     * Sends the player the top ten richest accounts on the server.
-     *
-     * @param player
-     * @param size
-     * @deprecated
-     */
-    public static void getTop(Player player, int size) {
-        ArrayList<String> top = new ArrayList<String>();
-        for (int i = 0; top.size() > i; i++) {
-            player.sendMessage((i + 1) + ") " + top.get(i) + " - "
-                    + MCCom.getBalance(top.get(i)) + " "
-                    + MCCom.getCurrency(top.get(i)));
-        }
-    }
-
-    /**
-     * Sets the specified player's currency to the specified currency.
-     *
-     * @param player
-     * @param toPlayer
-     * @param currency
-     */
-    public static void setCurrency(Player player, String toPlayer, String currency) {
-        try {
-            toPlayer = MCCom.getAccount(toPlayer);
-        } catch (NoAccountException e) {
-            noAccount(player);
-            return;
-        }
-//        if (MCCom.exists(toPlayer))
-//        {
-        if (MCCom.currencyExists(currency)) {
-            double toBalance = MCCom.getBalance(toPlayer);
-
-            double value = MCCom.getCurrencyValue(MCCom
-                    .getCurrency(toPlayer));
-            double toValue = MCCom.getCurrencyValue(currency);
-
-            double base = toBalance / value;
-            base = base * toValue;
-
-            MCCom.setAccountCurrency(toPlayer, currency);
-            MCCom.setBalance(toPlayer, base);
-
-            String[] args = {toPlayer, currency};
-
-            player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageCurrencySet, args));
-        } else {
-            player.sendMessage(MCLang.tag + MCLang.errorCurrencyNotFound);
-        }
-//        }
-//        else
-//        {
-//            noAccount(player);
-//        }
-    }
-
+     
     /**
      * Check's the player's bank balance.
      *
@@ -779,16 +428,7 @@ public class Balance {
 
             double toBalance = MCCom.getBalance(bank, player.getName());
 
-            double value = MCCom.getCurrencyValue(MCCom
-                    .getCurrency(player.getName()));
-            double toValue = 1.0;
-
-            double base = amount / value;
-            base = base * toValue;
-
-            double newToBalance = toBalance + base;
-
-            MCCom.setBalance(bank, player.getName(), newToBalance);
+            MCCom.setBalance(bank, player.getName(), toBalance + amount);
 
             String[] args = {bank, player.getName(), amount + ""};
             player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageBankAccountDeposit, args));
@@ -819,18 +459,8 @@ public class Balance {
         try {
             MCCom.subtract(bank, player.getName(), amount);
 
-            double toBalance = MCCom.getBalance(player.getName());
-
-            double toValue = MCCom.getCurrencyValue(MCCom
-                    .getCurrency(player.getName()));
-            double value = 1.0;
-
-            double base = amount / value;
-            base = base * toValue;
-
-            double newToBalance = toBalance + base;
-
-            MCCom.setBalance(player.getName(), newToBalance);
+            double toBalance = MCCom.getBalance(player.getName());          
+            MCCom.setBalance(player.getName(), toBalance - amount);
 
             String[] args = {bank, player.getName(), amount + ""};
             player.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageBankAccountWithdraw, args));

@@ -1,6 +1,6 @@
 package me.mjolnir.mineconomy.internal;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 
@@ -14,7 +14,6 @@ import me.mjolnir.mineconomy.exceptions.NaturalNumberException;
 import me.mjolnir.mineconomy.exceptions.NoAccountException;
 import me.mjolnir.mineconomy.exceptions.NoBankException;
 import me.mjolnir.mineconomy.exceptions.NoCurrencyException;
-import me.mjolnir.mineconomy.exceptions.NoCurrencyIdException;
 import me.mjolnir.mineconomy.internal.util.IOH;
 
 /**
@@ -26,17 +25,7 @@ public class MCCom {
 
     private static AccountingBase accounting = null;
 
-    /**
-     * Returns account from case-insensitive alias
-     *
-     * @param account
-     * @return Account name
-     */
     public static String getAccount(String account) {
-        return getAccount(account, "");
-    }
-
-    private static String getAccount(String account, String ex1) {
         if (accounting.hashaccount.containsKey(account.toLowerCase())) {
             return accounting.hashaccount.get(account.toLowerCase());
         }
@@ -44,7 +33,7 @@ public class MCCom {
         Object[] accounts = accounting.treeaccount.toArray();
 
         try {
-            return accounting.hashaccount.get(binarySearch(accounting.treeaccount.toArray(), account.toLowerCase(), 0, accounts.length - 1, ex1));
+            return accounting.hashaccount.get(binarySearch(accounting.treeaccount.toArray(), account.toLowerCase(), 0, accounts.length - 1, ""));
         } catch (NoAccountException ex) {
             String result = accounting.loadAccount(account);
             if (result != "") {
@@ -115,17 +104,7 @@ public class MCCom {
      * @throws NoAccountException
      */
     public static double getBalance(String account) {
-        return accounting.getBalance(getAccount(account, "MCCom: public double getBalance(String account)"));
-//		if (exists(account))
-//		{
-//			return accounting.getBalance(account);
-//		}
-//		else
-//		{
-//			throw new NoAccountException(
-//					"MCCom: public double getBalance(String account)",
-//					"account");
-//		}
+        return accounting.getBalance(getAccount(account));
     }
 
     /**
@@ -137,9 +116,7 @@ public class MCCom {
      * @throws MaxDebtException
      */
     public static void setBalance(String account, double balance) {
-        account = getAccount(account, "MCCom: public void setBalance(String account, double balance)");
-//		if (exists(account))
-//		{
+        account = getAccount(account);
         if (balance >= -Settings.maxDebt) {
             accounting.setBalance(account, balance);
         } else {
@@ -147,13 +124,6 @@ public class MCCom {
                     "MCCom: public void setBalance(String account, double balance)",
                     "balance");
         }
-//		}
-//		else
-//		{
-//			throw new NoAccountException(
-//					"MCCom: public void setBalance(String account, double balance)",
-//					"account");
-//		}
     }
 
     /**
@@ -175,21 +145,8 @@ public class MCCom {
      * @throws NoAccountException
      */
     public static boolean canAfford(String account, double amount) {
-        account = getAccount(account, "MCCom: public boolean canAfford(String account, double amount)");
-//		if (exists(account))
-//		{
-        if (accounting.getBalance(account) + Settings.maxDebt >= amount) {
-            return true;
-        } else {
-            return false;
-        }
-//		}
-//		else
-//		{
-//			throw new NoAccountException(
-//					"MCCom: public boolean canAfford(String account, double amount)",
-//					"account");
-//		}
+        account = getAccount(account);
+        return accounting.getBalance(account) + Settings.maxDebt >= amount;
     }
 
     /**
@@ -201,18 +158,8 @@ public class MCCom {
      */
     public static void add(String account, double amount) {
         amount = Math.abs(amount);
-        account = getAccount(account, "MCCom: public void add(String account, double amount)");
-//		if (exists(account))
-//		{
-        accounting.setBalance(account, accounting.getBalance(account)
-                + amount);
-//		}
-//		else
-//		{
-//			throw new NoAccountException(
-//					"MCCom: public void add(String account, double amount)",
-//					"account");
-//		}
+        account = getAccount(account);
+        accounting.setBalance(account, accounting.getBalance(account) + amount);
     }
 
     /**
@@ -225,24 +172,14 @@ public class MCCom {
      */
     public static void subtract(String account, double amount) {
         amount = Math.abs(amount);
-        account = getAccount(account, "MCCom: public void subtract(String account, double amount)");
-//		if (exists(account))
-//		{
+        account = getAccount(account);
         if (accounting.getBalance(account) + Settings.maxDebt >= amount) {
-            accounting.setBalance(account, accounting.getBalance(account)
-                    - amount);
+            accounting.setBalance(account, accounting.getBalance(account) - amount);
         } else {
             throw new InsufficientFundsException(
                     "MCCom: public void subtract(String account, double amount)",
                     "amount");
         }
-//		}
-//		else
-//		{
-//			throw new NoAccountException(
-//					"MCCom: public void subtract(String account, double amount)",
-//					"account");
-//		}
     }
 
     /**
@@ -255,18 +192,8 @@ public class MCCom {
      */
     public static void multiply(String account, double multiplier) {
         multiplier = Math.abs(multiplier);
-        account = getAccount(account, "MCCom: public void multiply(String account, double multiplier)");
-//		if (exists(account))
-//		{
-        accounting.setBalance(account, accounting.getBalance(account)
-                * multiplier);
-//		}
-//		else
-//		{
-//			throw new NoAccountException(
-//					"MCCom: public void multiply(String account, double multiplier)",
-//					"account");
-//		}
+        account = getAccount(account);
+        accounting.setBalance(account, accounting.getBalance(account) * multiplier);
     }
 
     /**
@@ -280,13 +207,10 @@ public class MCCom {
      */
     public static void divide(String account, double divisor) {
         divisor = Math.abs(divisor);
-        account = getAccount(account, "MCCom: public void divide(String account, double divisor)");
-//		if (exists(account))
-//		{
+        account = getAccount(account);
         if (accounting.getBalance(account) / divisor >= Settings.maxDebt) {
             if (divisor > 0) {
-                accounting.setBalance(account,
-                        accounting.getBalance(account) / divisor);
+                accounting.setBalance(account, accounting.getBalance(account) / divisor);
             } else {
                 throw new DivideByZeroException(
                         "MCCom: public void divide(String account, double divisor)",
@@ -296,13 +220,6 @@ public class MCCom {
             throw new InsufficientFundsException("MCCom: public void divide(String account, double divisor)",
                     "account");
         }
-//		}
-//		else
-//		{
-//			throw new NoAccountException(
-//					"MCCom: public void divide(String account, double divisor)",
-//					"account");
-//		}
     }
 
     /**
@@ -312,17 +229,8 @@ public class MCCom {
      * @throws NoAccountException
      */
     public static void empty(String account) {
-        account = getAccount(account, "MCCom: public void empty(String account)");
-//		if (exists(account))
-//		{
+        account = getAccount(account);
         accounting.setBalance(account, 0);
-//		}
-//		else
-//		{
-//			throw new NoAccountException(
-//					"MCCom: public void empty(String account)",
-//					"account");
-//		}
     }
 
     /**
@@ -332,11 +240,7 @@ public class MCCom {
      * @throws AccountNameConflictException
      */
     public static void create(String account) {
-        if (exists(account)) {
-            /*throw new AccountNameConflictException(
-             "MCCom: public void create(String account)",
-             "account");*/
-        } else {
+        if (!exists(account)) {
             accounting.create(account);
         }
     }
@@ -348,67 +252,8 @@ public class MCCom {
      * @throws NoAccountException
      */
     public static void delete(String account) {
-        account = getAccount(account, "MCCom: public void delete(String account)");
-//		if (exists(account))
-//		{
+        account = getAccount(account);
         accounting.delete(account);
-//		}
-//		else
-//		{
-//			throw new NoAccountException(
-//					"MCCom: public void delete(String account)",
-//					"account");
-//		}
-    }
-
-    /**
-     * Renames an existing account with the specified name.
-     *
-     * @param account
-     * @param newAccount
-     * @throws NoAccountException
-     * @throws AccountNameConflictException
-     */
-    public static void rename(String account, String newAccount) {
-        account = getAccount(account, "MCCom: public void rename(String account, String newAccount)");
-//		if (exists(account))
-//		{
-        try {
-            newAccount = getAccount(newAccount, "MCCom: public void rename(String account, String newAccount)");
-            throw new AccountNameConflictException("MCCom: public void rename(String account, String newAccount)", "newAccount");
-        } catch (NoAccountException e) {
-            double balance = accounting.getBalance(account);
-            String currency = accounting.getCurrency(account);
-            String status = accounting.getStatus(account);
-            accounting.delete(account);
-            accounting.create(newAccount);
-            accounting.setBalance(newAccount, balance);
-            accounting.setCurrency(newAccount, currency);
-            accounting.setStatus(newAccount, status);
-        }
-
-//			if (exists(newAccount))
-//			{
-//				throw new AccountNameConflictException("MCCom: public void rename(String account, String newAccount)", "newAccount");
-//			}
-//			else
-//			{
-//				double balance = accounting.getBalance(account);
-//				String currency = accounting.getCurrency(account);
-//				String status = accounting.getStatus(account);
-//				accounting.delete(account);
-//				accounting.create(newAccount);
-//				accounting.setBalance(newAccount, balance);
-//				accounting.setCurrency(newAccount, currency);
-//				accounting.setStatus(newAccount, status);
-//			}
-//		}
-//		else
-//		{
-//			throw new NoAccountException(
-//					"MCCom: public void rename(String account, String newAccount)",
-//					"account");
-//		}
     }
 
     /**
@@ -421,14 +266,9 @@ public class MCCom {
      * @throws NoAccountException
      * @throws InsufficientFundsException
      */
-    public static void transfer(String accountFrom, String accountTo,
-            double amount) {
-        accountFrom = getAccount(accountFrom, "MCCom: public void transfer(String accountFrom, String accountTo, double amount)");
-//		if (exists(accountFrom))
-//		{
-        accountTo = getAccount(accountTo, "MCCom: public void transfer(String accountFrom, String accountTo, double amount)");
-//			if (exists(accountTo))
-//			{
+    public static void transfer(String accountFrom, String accountTo, double amount) {
+        accountFrom = getAccount(accountFrom);
+        accountTo = getAccount(accountTo);
         if (accounting.getBalance(accountTo) + Settings.maxDebt >= amount) {
             accounting.setBalance(accountFrom,
                     accounting.getBalance(accountFrom) - amount);
@@ -439,20 +279,6 @@ public class MCCom {
                     "MCCom: public void transfer(String accountFrom, String accountTo, double amount)",
                     "amount");
         }
-//			}
-//			else
-//			{
-//				throw new NoAccountException(
-//						"MCCom: public void transfer(String accountFrom, String accountTo, double amount)",
-//						"accountTo");
-//			}
-//		}
-//		else
-//		{
-//			throw new NoAccountException(
-//					"MCCom: public void transfer(String accountFrom, String accountTo, double amount)",
-//					"accountFrom");
-//		}
     }
 
     /**
@@ -460,169 +286,8 @@ public class MCCom {
      *
      * @return An ArrayList of MineConomy Accounts
      */
-    public static ArrayList<String> getAccounts() {
+    public static List<String> getAccounts() {
         return accounting.getAccounts();
-    }
-
-    /**
-     * Gets the currency of the specified account.
-     *
-     * @param account
-     * @return currency
-     * @throws NoAccountException
-     */
-    public static String getAccountCurrency(String account) {
-//	    if (accounting.exists(account))
-//        {
-        return accounting.getCurrency(getAccount(account, "MCCom: public static String getCurrency(String account)"));
-//        }
-//	    else
-//	    {
-//	        throw new NoAccountException("MCCom: public static String getCurrency(String account)", "account");
-//	    }
-    }
-
-    /**
-     * Sets the specified currency of the specified account.
-     *
-     * @param account
-     * @param currency
-     * @throws NoAccountException
-     * @throws NoCurrencyException
-     */
-    public static void setAccountCurrency(String account, String currency) {
-        if (Currency.exists(currency)) {
-//	        if (accounting.exists(account))
-//	        {
-            accounting.setCurrency(getAccount(account, "MCCom: public static void setCurrency(String account, String currency)"), currency);
-//	        }
-//	        else
-//	        {
-//	            throw new NoAccountException("MCCom: public static void setCurrency(String account, String currency)", "account");
-//	        }
-        } else {
-            throw new NoCurrencyException("MCCom: public static void setCurrency(String account, String currency)",
-                    "currency");
-        }
-    }
-
-    // MineConomy Currency Methods ---------------------------------------------
-    /**
-     * Returns the default currency.
-     *
-     * @param account
-     * @return The default currency.
-     */
-    public static String getDefaultCurrency() {
-        return Currency.getDefault();
-    }
-
-    /**
-     * Returns true if the specified currency exists.
-     *
-     * @param currency
-     * @return True if the specified currency exists.
-     */
-    public static boolean currencyExists(String currency) {
-        return Currency.exists(currency);
-    }
-
-    /**
-     * Gets the ID of the specified currency.
-     *
-     * @param currency
-     * @return The ID of the specified currency.
-     */
-    public static String getCurrencyId(String currency) {
-        if (Currency.physicalExists(currency)) {
-            return Currency.getId(currency);
-        } else {
-            throw new NoCurrencyException("MCCom: public static String getCurrencyId(String currency)",
-                    "currency");
-        }
-    }
-
-    /**
-     * Gets the currency with the specified ID.
-     *
-     * @param id
-     * @return The currency with the specified ID.
-     */
-    public static String getCurrencyById(String id) {
-        if (Currency.idExists(id)) {
-            return Currency.getCurrency(id);
-        } else {
-            throw new NoCurrencyIdException("MCCom: public static String getCurrency(String id)",
-                    "id");
-        }
-    }
-
-    /**
-     * Returns true if the specified ID exists.
-     *
-     * @param id
-     * @return True if the specified ID exists.
-     */
-    public static boolean idExists(String id) {
-        return Currency.idExists(id);
-    }
-
-    /**
-     * Returns true if the specified physical currency exists.
-     *
-     * @param currency
-     * @return True is specified physical currency exists.
-     */
-    public static boolean physicalCurrencyExists(String currency) {
-        return Currency.physicalExists(currency);
-    }
-
-    /**
-     * Returns the currency used by an account.
-     *
-     * @param account
-     * @throws NoAccountException
-     * @return Currency name
-     */
-    public static String getCurrency(String account) {
-//	    if (accounting.exists(account))
-//	    {
-        return accounting.getCurrency(getAccount(account, "MCCom: public static String getCurrency(String account)"));
-//	    }
-//	    else
-//	    {
-//	        throw new NoAccountException("MCCom: public static String getCurrency(String account)", "account");
-//	    }
-    }
-
-    /**
-     * Returns the specified currency's value.
-     *
-     * @param currency
-     * @throws NoCurrencyException
-     * @return Currency value
-     */
-    public static double getCurrencyValue(String currency) {
-        if (Currency.exists(currency)) {
-            return Currency.getValue(currency);
-        } else {
-            throw new NoCurrencyException("MCCom: public static double getCurrencyValue(String currency)", "currency");
-        }
-    }
-
-    /**
-     * Returns the specified physical currency's value.
-     *
-     * @param currency
-     * @throws NoCurrencyException
-     * @return Currency value
-     */
-    public static double getPhysicalCurrencyValue(String currency) {
-        if (Currency.physicalExists(currency)) {
-            return Currency.getPhysicalValue(currency);
-        } else {
-            throw new NoCurrencyException("MCCom: public static double getPhysicalCurrencyValue(String currency)", "currency");
-        }
     }
 
     // MineConomy Bank Methods -------------------------------------------------
@@ -718,11 +383,7 @@ public class MCCom {
     public static boolean canAfford(String bank, String account, double amount) {
         if (bankExists(bank)) {
             if (accountExists(bank, account)) {
-                if (Banking.getBalance(bank, account) + Banking.getMaxDebt(bank) >= amount) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return Banking.getBalance(bank, account) + Banking.getMaxDebt(bank) >= amount;
             } else {
                 throw new NoAccountException(
                         "MCCom: public static boolean canAfford(String bank, String account, double amount)",
@@ -1019,57 +680,38 @@ public class MCCom {
      *
      * @return All banks
      */
-    public static ArrayList<String> getBanks() {
+    public static List<String> getBanks() {
         return Banking.getBanks();
     }
 
     // Vault Methods -----------------------------------------------------------
     /**
      * Returns true if the specified account has at least the specified amount.
-     * (Currencies are converted.)
      *
      * @param account
      * @param amount
      * @return True if the specified account has at least the specified amount.
      */
     public static boolean canExternalAfford(String account, double amount) {
-        double value = MCCom.getCurrencyValue(MCCom
-                .getCurrency(account));
-
-        double base = amount / value;
-
-        return MCCom.canAfford(account, base);
+        return MCCom.canAfford(account, amount);
     }
 
     /**
-     * Returns the balance of the specified account. (Currencies are converted.)
-     *
+     * Returns the balance of the specified account.
      * @param account
      * @return Balance
      */
     public static double getExternalBalance(String account) {
-        double value = MCCom.getCurrencyValue(MCCom
-                .getCurrency(account));
-
-        double base = MCCom.getBalance(account) * value;
-
-        return base;
+        return MCCom.getBalance(account);
     }
 
     /**
-     * Sets the specified account's balance to the specified amount. (Currencies
-     * are converted.)
-     *
+     * Sets the specified account's balance to the specified amount.
      * @param account
      * @param balance
      */
     public static void setExternalBalance(String account, double balance) {
-        double value = MCCom.getCurrencyValue(MCCom
-                .getCurrency(account));
-
-        double base = balance / value;
-
-        MCCom.setBalance(account, base);
+        MCCom.setBalance(account, balance);
     }
 
     // Basic Variable Getters --------------------------------------------------
@@ -1088,13 +730,10 @@ public class MCCom {
     public static void initialize() {
         if (Settings.dbtype.equalsIgnoreCase("mysql")) {
             IOH.log("MySQL is enabled for Accounts.", IOH.DEV);
-            Bukkit.getConsoleSender().sendMessage("§9[Mineconomy] §fMySQL is enabled for Accounts.");
+            Bukkit.getConsoleSender().sendMessage("ï¿½9[Mineconomy] ï¿½fMySQL is enabled for Accounts.");
             accounting = new MySqlAccounting();
-        } else {
-            IOH.log("YML is enabled for Accounts.", IOH.DEV);
-            Bukkit.getConsoleSender().sendMessage("§9[Mineconomy] §fYML is enabled for Accounts.");
-            accounting = new Accounting();
         }
+        IOH.log("MySQL is not yet configured! Plugin will NOT work!", IOH.VERY_IMPORTANT);
     }
 
     /**
@@ -1112,7 +751,7 @@ public class MCCom {
      * @return version
      */
     public static String getVersion() {
-        return MineConomy.getVersion();
+        return MineConomy.getInstance().getDescription().getVersion();
     }
 
     /**
@@ -1121,6 +760,6 @@ public class MCCom {
      * @return MineConomy
      */
     public static MineConomy getPlugin() {
-        return MineConomy.plugin;
+        return MineConomy.getInstance();
     }
 }

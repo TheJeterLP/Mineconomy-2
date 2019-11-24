@@ -9,12 +9,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
-
 import me.mjolnir.mineconomy.MineConomy;
 import me.mjolnir.mineconomy.internal.Settings;
-import me.mjolnir.mineconomy.internal.gui.GUI;
 
 /**
  * Streamlines log code
@@ -24,10 +20,8 @@ import me.mjolnir.mineconomy.internal.gui.GUI;
 @SuppressWarnings("javadoc")
 public class IOH {
 
-    private static File dir = new File(MineConomy.maindir
-            + "lang/");
-    private static File logFile = new File(MineConomy.maindir
-            + "lang/MineConomy.log");
+    private static File dir = new File(MineConomy.getInstance().getDataFolder(), "lang/");
+    private static File logFile = new File(dir, "MineConomy.log");
     private static StringBuffer log = new StringBuffer();
 
     public static boolean gui = false;
@@ -37,7 +31,6 @@ public class IOH {
     public static final int WARNING = 3;
     public static final int IMPORTANT = 2;
     public static final int VERY_IMPORTANT = 1;
-    
 
     /**
      * Appends specified message to the log
@@ -49,38 +42,38 @@ public class IOH {
         if (priority == 4) {
             if (priority <= Settings.logPriority) {
                 Logger.getLogger("Minecraft").info(
-                        "[MineConomy] " + "[INFO] " + message.replace("&", "§"));
+                        "[MineConomy] " + "[INFO] " + message.replace("&", "ï¿½"));
             }
 
             append("[INFO]\t\t" + message);
         } else if (priority == 2) {
             if (priority <= Settings.logPriority) {
                 Logger.getLogger("Minecraft").info(
-                        "[MineConomy] " + "[IMPORTANT] " + message.replace("&", "§"));
+                        "[MineConomy] " + "[IMPORTANT] " + message.replace("&", "ï¿½"));
             }
 
             append("[IMPORTANT]\t" + message);
         } else if (priority == 1) {
             if (priority <= Settings.logPriority) {
                 Logger.getLogger("Minecraft").info(
-                        "[MineConomy] " + "[VERY IMPORTANT] " + message.replace("&", "§"));
+                        "[MineConomy] " + "[VERY IMPORTANT] " + message.replace("&", "ï¿½"));
             }
 
             append("[VERY IMPORTANT]\t" + message);
         } else if (priority == 3) {
             if (priority <= Settings.logPriority) {
                 Logger.getLogger("Minecraft").warning(
-                        "[MineConomy] " + "[WARNING] " + message.replace("&", "§"));
+                        "[MineConomy] " + "[WARNING] " + message.replace("&", "ï¿½"));
             }
 
             append("[WARNING]\t\t" + message);
         } else {
             if (priority <= Settings.logPriority) {
                 Logger.getLogger("Minecraft").info(
-                        "[MineConomy] " + "[DEV] " + message.replace("&", "§"));
+                        "[MineConomy] " + "[DEV] " + message.replace("&", "ï¿½"));
             }
 
-            append("[DEV]\t\t" + message.replace("&", "§"));
+            append("[DEV]\t\t" + message.replace("&", "ï¿½"));
         }
     }
 
@@ -103,10 +96,6 @@ public class IOH {
         Logger.getLogger("Minecraft").severe("[MineConomy] [ERROR] " + message);
 
         append("[ERROR]\t\t" + message);
-
-        if (Settings.gui) {
-            GUI.error(message);
-        }
     }
 
     private static void append(String text) {
@@ -117,27 +106,11 @@ public class IOH {
         String act = "\n[" + dateFormat.format(date) + "] " + text;
 
         log.append(act);
-
-        if (Settings.gui) {
-            updateGUILog();
-        }
     }
 
     public static void clearLog() {
         log = new StringBuffer();
         log.append("=== MineConomy Log File ===\n\n");
-
-        updateGUILog();
-    }
-
-    public static void updateGUILog() {
-        if (gui) {
-            GUI.logtext.setEditable(true);
-            GUI.logtext.setText(log.toString());
-            GUI.logtext.setEditable(false);
-            GUI.logtext.select(GUI.logtext.getText().length(), GUI.logtext
-                    .getText().length());
-        }
     }
 
     public static void saveLog() {

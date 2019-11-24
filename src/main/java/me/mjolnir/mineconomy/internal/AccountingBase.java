@@ -1,15 +1,14 @@
 package me.mjolnir.mineconomy.internal;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.TreeSet;
+import java.util.List;
+import java.util.Map;
 
 @SuppressWarnings("javadoc")
 public abstract class AccountingBase {
 
-    public Hashtable<String, String> hashaccount;
+    public Map<String, String> hashaccount;
 
-    public TreeSet<String> treeaccount;
+    public List<String> treeaccount;
 
     public abstract void load();
 
@@ -29,13 +28,9 @@ public abstract class AccountingBase {
 
     protected abstract void create(String account);
 
-    protected abstract String getCurrency(String account);
-
-    protected abstract void setCurrency(String account, String currency);
-
     protected abstract String getStatus(String account);
 
     protected abstract void setStatus(String account, String status);
 
-    protected abstract ArrayList<String> getAccounts();
+    protected abstract List<String> getAccounts();
 }

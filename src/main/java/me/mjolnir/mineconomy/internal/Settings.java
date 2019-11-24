@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import me.mjolnir.mineconomy.MineConomy;
 import me.mjolnir.mineconomy.internal.util.IOH;
-import me.mjolnir.mineconomy.internal.util.MCFormat;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -18,30 +17,19 @@ import org.bukkit.configuration.file.YamlConfiguration;
 @SuppressWarnings("javadoc")
 public class Settings {
 
-    private static File propFile = new File(MineConomy.maindir + "config.yml");
+    private static File propFile = new File(MineConomy.getInstance().getDataFolder(), "config.yml");
     private static YamlConfiguration config;
 
     public static double startingBalance = 0.0;
     public static double maxDebt = 0.0;
     public static double maxBalance = 9999999.99;
-    public static String interestMode = "none";
-    public static double interestAmount = 0.0;
-    public static int interestInterval = 0;
-    public static String taxMode = "none";
-    public static double taxAmount = 0.0;
-    public static int taxInterval = 0;
-    public static boolean gui = false;
-    public static boolean ops = true;
     public static String lang = "en";
-    public static boolean iconomy = false;
     public static int logPriority = 4;
     public static String dburl = "";
     public static String dbname = "";
     public static String dbuser = "";
     public static String dbpass = "";
     public static String dbtype = "none";
-    public static int autosaveInterval = 3600;
-    public static String migrate = "none";
 
     /**
      * Loads the Configuration
@@ -52,19 +40,12 @@ public class Settings {
 
         if (!propFile.exists()) {
             IOH.log("Config file not found. Creating Config file...", IOH.DEV);
-            Bukkit.getConsoleSender().sendMessage("§9[Mineconomy] §fConfig file not found. Creating Config file...");
+            Bukkit.getConsoleSender().sendMessage("ï¿½9[Mineconomy] ï¿½fConfig file not found. Creating Config file...");
             config.set("Balance.Starting Balance", 0);
             config.set("Balance.Max Debt", 0);
             config.set("Balance.Max Balance", 9999999.99);
-            config.set("Display GUI", false);
             config.set("Warn Ops", true);
-            config.set("Log Priority", 4);
-            config.set("Interest.Amount", 0);
-            config.set("Interest.Interval", "0s");
-            config.set("Interest.Mode", "none");
-            config.set("Tax.Amount", 0);
-            config.set("Tax.Interval", "0s");
-            config.set("Tax.Mode", "none");
+            config.set("Log Priority", 4);           
             config.set("Database.URL", "");
             config.set("Database.Name", "");
             config.set("Database.Username", "");
@@ -72,20 +53,18 @@ public class Settings {
             config.set("Database.Type", "none");
             config.set("Lang", "en");
             config.set("Auto-Save Interval", "1h");
-            config.set("iConomy Compatibility Mode", false);
-            config.set("Migration Mode", "none");
             IOH.log("Config file created!", IOH.DEV);
-            Bukkit.getConsoleSender().sendMessage("§9[Mineconomy] §fConfig file created!");
+            Bukkit.getConsoleSender().sendMessage("ï¿½9[Mineconomy] ï¿½fConfig file created!");
             save();
         }
 
         IOH.log("Loading Config file...", IOH.DEV);
-        Bukkit.getConsoleSender().sendMessage("§9[Mineconomy] §fLoading Config File...");
+        Bukkit.getConsoleSender().sendMessage("ï¿½9[Mineconomy] ï¿½fLoading Config File...");
 
         reload();
 
         IOH.log("Config file loaded!", IOH.DEV);
-        Bukkit.getConsoleSender().sendMessage("§9[Mineconomy] §fConfig file Loaded!");
+        Bukkit.getConsoleSender().sendMessage("ï¿½9[Mineconomy] ï¿½fConfig file Loaded!");
     }
 
     /**
@@ -96,25 +75,14 @@ public class Settings {
 
         startingBalance = config.getDouble("Balance.Starting Balance", startingBalance);
         maxDebt = Math.abs(config.getDouble("Balance.Max Debt", maxDebt));
-        maxBalance = config.getDouble("Balance.Max Balance", maxBalance);
-        gui = config.getBoolean("Display GUI", gui);
-        ops = config.getBoolean("Warn Ops", ops);
-        interestAmount = config.getDouble("Interest.Amount", interestAmount);
-        interestInterval = MCFormat.time(config.getString("Interest.Interval", interestInterval + ""));
-        interestMode = config.getString("Interest.Mode", interestMode);
-        taxAmount = config.getDouble("Tax.Amount", taxAmount);
-        taxInterval = MCFormat.time(config.getString("Tax.Interval", taxInterval + ""));
-        taxMode = config.getString("Tax.Mode", taxMode);
+        maxBalance = config.getDouble("Balance.Max Balance", maxBalance);      
         dburl = config.getString("Database.URL", dburl);
         dbname = config.getString("Database.Name", dbname);
         dbuser = config.getString("Database.Username", dbuser);
         dbpass = config.getString("Database.Password", dbpass);
         dbtype = config.getString("Database.Type", dbtype);
         lang = config.getString("Lang", lang);
-        autosaveInterval = MCFormat.time(config.getString("Auto-Save Interval", autosaveInterval + ""));
         logPriority = config.getInt("Log Priority", logPriority);
-        iconomy = config.getBoolean("iConomy Compatibility Mode", iconomy);
-        migrate = config.getString("Migration Mode", migrate);
     }
 
     /**
@@ -124,14 +92,6 @@ public class Settings {
         config.set("Balance.Starting Balance", startingBalance);
         config.set("Balance.Max Debt", maxDebt);
         config.set("Balance.Max Balance", maxBalance);
-        config.set("Display GUI", gui);
-        config.set("Warn Ops", ops);
-        config.set("Interest.Amount", interestAmount);
-        config.set("Interest.Interval", interestInterval);
-        config.set("Interest.Mode", interestMode);
-        config.set("Tax.Amount", taxAmount);
-        config.set("Tax.Interval", taxInterval);
-        config.set("Tax.Mode", taxMode);
         config.set("Database.URL", dburl);
         config.set("Database.Name", dbname);
         config.set("Database.Username", dbuser);
@@ -139,9 +99,6 @@ public class Settings {
         config.set("Database.Type", dbtype);
         config.set("Lang", lang);
         config.set("Log Priority", logPriority);
-        config.set("Auto-Save Interval", autosaveInterval);
-        config.set("iConomy Compatibility Mode", iconomy);
-        config.set("Migration Mode", migrate);
 
         try {
             config.save(propFile);

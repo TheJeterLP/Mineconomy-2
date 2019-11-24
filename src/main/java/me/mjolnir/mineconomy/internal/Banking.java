@@ -1,9 +1,12 @@
 package me.mjolnir.mineconomy.internal;
 
+import com.google.common.collect.HashBiMap;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import me.mjolnir.mineconomy.MineConomy;
 import me.mjolnir.mineconomy.internal.util.IOH;
@@ -19,21 +22,22 @@ import org.bukkit.configuration.file.YamlConfiguration;
  */
 public class Banking {
 
-    private static File bankFile = new File(
-            MineConomy.maindir
-            + "banks.yml");
+    private static final File bankFile = new File(MineConomy.getInstance().getDataFolder(), "banks.yml");
     private static YamlConfiguration banks;
 
-    private static ArrayList<String> banklist;
-    private static Hashtable<String, String> bankstatus;
-    private static Hashtable<String, Double> bankstartingbalance;
-    private static Hashtable<String, Double> bankmaxdebt;
-    private static Hashtable<String, Hashtable<String, String>> bankaccountstatus;
-    private static Hashtable<String, String> bankaccountstatustemp;
-    private static Hashtable<String, Hashtable<String, Double>> bankaccountbalance;
-    private static Hashtable<String, Double> bankaccountbalancetemp;
-    private static Hashtable<String, ArrayList<String>> bankaccounts;
-    private static ArrayList<String> bankaccountstemp;
+    private static final List<String> banklist = new ArrayList<>();
+
+    private static final Map<String, String> bankstatus = new HashMap<>();
+    private static final Map<String, Double> bankstartingbalance = new HashMap<>();
+    private static final Map<String, Double> bankmaxdebt = new HashMap<>();
+    private static final Map<String, Map<String, String>> bankaccountstatus = new HashMap<>();
+    private static final Map<String, Map<String, Double>> bankaccountbalance = new HashMap<>();
+    private static final Map<String, List<String>> bankaccounts = new HashMap<>();
+
+    private static List<String> bankaccountstemp = new ArrayList<>();
+    private static Map<String, Double> bankaccountbalancetemp = new HashMap<>();
+    private static Map<String, String> bankaccountstatustemp = new HashMap<>();
+
 
     /*
      * .: Hashtable Key :.
@@ -58,34 +62,22 @@ public class Banking {
         banks = YamlConfiguration.loadConfiguration(bankFile);
         banks.options().header("=== MineConomy Banks ===\n\n    Do not edit!\n");
 
-        banklist = new ArrayList<String>();
-
-        bankstatus = new Hashtable<String, String>();
-        bankmaxdebt = new Hashtable<String, Double>();
-        bankstartingbalance = new Hashtable<String, Double>();
-        bankaccountstatus = new Hashtable<String, Hashtable<String, String>>();
-        bankaccountbalance = new Hashtable<String, Hashtable<String, Double>>();
-        bankaccountstatustemp = new Hashtable<String, String>();
-        bankaccountbalancetemp = new Hashtable<String, Double>();
-        bankaccounts = new Hashtable<String, ArrayList<String>>();
-        bankaccountstemp = new ArrayList<String>();
-
         if (!bankFile.exists()) {
             IOH.log("Banks file not found...", IOH.DEV);
-            Bukkit.getConsoleSender().sendMessage("§9[Mineconomy] §cBanks file not found...!");
+            Bukkit.getConsoleSender().sendMessage("ï¿½9[Mineconomy] ï¿½cBanks file not found...!");
             banks.set("Banks", "");
             IOH.log("Banks file created!", IOH.DEV);
-            Bukkit.getConsoleSender().sendMessage("§9[Mineconomy] §aBanks file created!");
+            Bukkit.getConsoleSender().sendMessage("ï¿½9[Mineconomy] ï¿½aBanks file created!");
             save();
         }
 
         IOH.log("Loading Banks file...", IOH.DEV);
-        Bukkit.getConsoleSender().sendMessage("§9[Mineconomy] §fLoading Banks file...");
+        Bukkit.getConsoleSender().sendMessage("ï¿½9[Mineconomy] ï¿½fLoading Banks file...");
 
         reload();
 
         IOH.log("Banks file loaded!", IOH.DEV);
-        Bukkit.getConsoleSender().sendMessage("§9[Mineconomy] §fBanks file loaded!!");
+        Bukkit.getConsoleSender().sendMessage("ï¿½9[Mineconomy] ï¿½fBanks file loaded!!");
     }
 
     /**
@@ -93,18 +85,16 @@ public class Banking {
      */
     public static void reload() {
         banks = YamlConfiguration.loadConfiguration(bankFile);
-
-        banklist = new ArrayList<String>();
-
-        bankstatus = new Hashtable<String, String>();
-        bankmaxdebt = new Hashtable<String, Double>();
-        bankstartingbalance = new Hashtable<String, Double>();
-        bankaccountstatus = new Hashtable<String, Hashtable<String, String>>();
-        bankaccountbalance = new Hashtable<String, Hashtable<String, Double>>();
-        bankaccountstatustemp = new Hashtable<String, String>();
-        bankaccountbalancetemp = new Hashtable<String, Double>();
-        bankaccounts = new Hashtable<String, ArrayList<String>>();
-        bankaccountstemp = new ArrayList<String>();
+        banklist.clear();
+        bankstatus.clear();
+        bankmaxdebt.clear();
+        bankstartingbalance.clear();
+        bankaccountstatus.clear();
+        bankaccountbalance.clear();
+        bankaccountstatustemp.clear();
+        bankaccountbalancetemp.clear();
+        bankaccounts.clear();
+        bankaccountstemp.clear();
 
         ConfigurationSection cs = banks.getConfigurationSection("Banks");
         Object[] t;
@@ -135,7 +125,7 @@ public class Banking {
                     bankmaxdebt.put(
                             bank,
                             Math.abs(Double.parseDouble(banks.get(
-                                                    "Banks." + bank + ".Max Debt").toString())));
+                                    "Banks." + bank + ".Max Debt").toString())));
                 } else if (t[j].equals("Starting Balance")) {
                     bankstartingbalance.put(bank, Double.parseDouble(banks.get(
                             "Banks." + bank + ".Starting Balance").toString()));
@@ -161,8 +151,8 @@ public class Banking {
                         bankaccounts.put(bank, bankaccountstemp);
                     }
 
-                    Hashtable<String, String> statustemp = new Hashtable<String, String>();
-                    Hashtable<String, Double> balancetemp = new Hashtable<String, Double>();
+                    Map<String, String> statustemp = new HashMap<>();
+                    Map<String, Double> balancetemp = new HashMap<>();
 
                     for (int k = 0; accounts.size() > k; k++) {
                         String account = accounts.get(k);
@@ -179,7 +169,7 @@ public class Banking {
                                         banks.get(
                                                 "Banks." + bank + ".Accounts."
                                                 + account + ".Status")
-                                        .toString());
+                                                .toString());
 
                             } else if (t2[l].equals("Balance")) {
 
@@ -323,7 +313,7 @@ public class Banking {
         bankstartingbalance.put(bank, balance);
     }
 
-    protected static ArrayList<String> getAccounts(String bank) {
+    protected static List<String> getAccounts(String bank) {
         return bankaccounts.get(bank);
     }
 
@@ -388,7 +378,7 @@ public class Banking {
         return banklist.contains(bank);
     }
 
-    protected static ArrayList<String> getBanks() {
+    protected static List<String> getBanks() {
         return banklist;
     }
 }

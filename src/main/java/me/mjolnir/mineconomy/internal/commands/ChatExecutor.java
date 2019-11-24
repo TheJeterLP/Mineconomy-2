@@ -1,13 +1,11 @@
 package me.mjolnir.mineconomy.internal.commands;
 
-import me.mjolnir.mineconomy.MineConomy;
 import me.mjolnir.mineconomy.exceptions.AccountNameConflictException;
 import me.mjolnir.mineconomy.exceptions.InsufficientFundsException;
 import me.mjolnir.mineconomy.exceptions.MaxDebtException;
 import me.mjolnir.mineconomy.exceptions.NoAccountException;
 import me.mjolnir.mineconomy.internal.MCCom;
 import me.mjolnir.mineconomy.internal.MCLang;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,42 +18,17 @@ import org.bukkit.entity.Player;
  */
 public class ChatExecutor implements CommandExecutor {
 
-    /**
-     * Creates new MCCommandExecutor object.
-     *
-     * @param plugin
-     */
-    public ChatExecutor(MineConomy plugin) {
-        // Do Nothing
-    }
-
-    public boolean onCommand(CommandSender sender, Command command,
-            String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("mc")
-                || command.getName().equalsIgnoreCase("money")) {
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (command.getName().equalsIgnoreCase("mc") || command.getName().equalsIgnoreCase("money")) {
             if (!(sender instanceof Player)) {
                 try {
                     if (args.length == 1) {
-                        if (args[0].equalsIgnoreCase("save")) {
-                            sender.sendMessage(MCLang.tag + ChatColor.BLACK
-                                    + "Saving MineConomy...");
-                            MineConomy.save();
-                            sender.sendMessage(MCLang.tag + ChatColor.BLACK
-                                    + "Save complete!");
-                        } else if (args[0].equalsIgnoreCase("reload")) {
-                            sender.sendMessage(MCLang.tag + ChatColor.BLACK
-                                    + "Reloading MineConomy...");
-                            MineConomy.reload();
-                            sender.sendMessage(MCLang.tag + ChatColor.BLACK
-                                    + "Reload complete!");
-                        } else {
-                            sender.sendMessage(MCLang.tag
-                                    + MCLang.errorCommandRecognition);
-                        }
+                        sender.sendMessage(MCLang.tag + MCLang.errorCommandRecognition);
                     } else if (args.length == 2) {
                         if (args[0].equalsIgnoreCase("get")) {
                             try {
-                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageAccountBalance, new String[]{MCCom.getAccountCurrency(args[1]), MCCom.getBalance(args[1]) + ""}));
+                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageAccountBalance, new String[]{MCCom.getBalance(args[1]) + ""}));
                             } catch (NoAccountException e) {
                                 sender.sendMessage(MCLang.tag
                                         + MCLang.errorNoAccount);
@@ -93,7 +66,7 @@ public class ChatExecutor implements CommandExecutor {
                             try {
                                 MCCom.setBalance(args[1],
                                         Double.parseDouble(args[2]));
-                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageSetBalance, new String[]{MCCom.getAccount(args[1]), MCCom.getBalance(args[1]) + "", MCCom.getCurrency(args[1])}));
+                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageSetBalance, new String[]{MCCom.getAccount(args[1]), MCCom.getBalance(args[1]) + ""}));
                             } catch (NumberFormatException e) {
                                 sender.sendMessage(MCLang.tag
                                         + MCLang.errorMoneyFormat);
@@ -107,7 +80,7 @@ public class ChatExecutor implements CommandExecutor {
                         } else if (args[0].equalsIgnoreCase("give")) {
                             try {
                                 MCCom.add(args[1], Double.parseDouble(args[2]));
-                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageGive, new String[]{MCCom.getAccount(args[1]), Double.parseDouble(args[2]) + "", MCCom.getCurrency(args[1])}));
+                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageGive, new String[]{MCCom.getAccount(args[1]), Double.parseDouble(args[2]) + ""}));
                             } catch (NumberFormatException e) {
                                 sender.sendMessage(MCLang.tag
                                         + MCLang.errorMoneyFormat);
@@ -119,7 +92,7 @@ public class ChatExecutor implements CommandExecutor {
                             try {
                                 MCCom.subtract(args[1],
                                         Double.parseDouble(args[2]));
-                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageTook, new String[]{Double.parseDouble(args[2]) + "", MCCom.getCurrency(args[1]), MCCom.getAccount(args[1])}));
+                                sender.sendMessage(MCLang.tag + MCLang.parse(MCLang.messageTook, new String[]{Double.parseDouble(args[2]) + "", MCCom.getAccount(args[1])}));
                             } catch (NumberFormatException e) {
                                 sender.sendMessage(MCLang.tag
                                         + MCLang.errorMoneyFormat);
@@ -165,43 +138,19 @@ public class ChatExecutor implements CommandExecutor {
                         }
                     } else if (args.length == 1) {
                         if (args[0].equalsIgnoreCase("balance")) {
-                            if (player
-                                    .hasPermission("mineconomy.balance.check")) {
+                            if (player.hasPermission("mineconomy.balance.check")) {
                                 Balance.check(player);
                             } else {
                                 warn(player);
                             }
-                        } else if (args[0].equalsIgnoreCase("exp")) {
-                            Balance.checkexp(player);
                         } else if (args[0].equalsIgnoreCase("help")) {
                             if (player.hasPermission("mineconomy.help")) {
                                 Balance.help(player, 1);
                             } else {
                                 warn(player);
                             }
-                        } else if (args[0].equalsIgnoreCase("save")) {
-                            if (player.hasPermission("mineconomy.save")) {
-                                player.sendMessage(MCLang.tag + ChatColor.WHITE
-                                        + "Saving MineConomy...");
-                                MineConomy.save();
-                                player.sendMessage(MCLang.tag + ChatColor.WHITE
-                                        + "Save complete!");
-                            } else {
-                                warn(player);
-                            }
-                        } else if (args[0].equalsIgnoreCase("reload")) {
-                            if (player.hasPermission("mineconomy.save")) {
-                                player.sendMessage(MCLang.tag + ChatColor.WHITE
-                                        + "Reloading MineConomy...");
-                                MineConomy.reload();
-                                player.sendMessage(MCLang.tag + ChatColor.WHITE
-                                        + "Reload complete!");
-                            } else {
-                                warn(player);
-                            }
                         } else {
-                            player.sendMessage(MCLang.tag
-                                    + MCLang.errorCommandRecognition);
+                            player.sendMessage(MCLang.tag + MCLang.errorCommandRecognition);
                         }
                     } else if (args.length == 2) {
                         if (args[0].equalsIgnoreCase("get")) {
@@ -211,22 +160,19 @@ public class ChatExecutor implements CommandExecutor {
                                 warn(player);
                             }
                         } else if (args[0].equalsIgnoreCase("create")) {
-                            if (player
-                                    .hasPermission("mineconomy.account.create")) {
+                            if (player.hasPermission("mineconomy.account.create")) {
                                 Balance.create(player, args[1]);
                             } else {
                                 warn(player);
                             }
                         } else if (args[0].equalsIgnoreCase("delete")) {
-                            if (player
-                                    .hasPermission("mineconomy.account.delete")) {
+                            if (player.hasPermission("mineconomy.account.delete")) {
                                 Balance.delete(player, args[1]);
                             } else {
                                 warn(player);
                             }
                         } else if (args[0].equalsIgnoreCase("empty")) {
-                            if (player
-                                    .hasPermission("mineconomy.balance.empty")) {
+                            if (player.hasPermission("mineconomy.balance.empty")) {
                                 Balance.empty(player, args[1]);
                             } else {
                                 warn(player);
@@ -237,40 +183,13 @@ public class ChatExecutor implements CommandExecutor {
                                     Balance.help(player,
                                             Integer.parseInt(args[1]));
                                 } catch (NumberFormatException e) {
-                                    player.sendMessage(MCLang.tag
-                                            + MCLang.errorInt);
+                                    player.sendMessage(MCLang.tag + MCLang.errorInt);
                                 }
                             } else {
                                 warn(player);
                             }
-                        } else if (args[0].equalsIgnoreCase("setcurrency")) {
-                            if (player.hasPermission("mineconomy.currency.set")) {
-                                Balance.setCurrency(player, player.getName(),
-                                        args[1]);
-                            } else {
-                                warn(player);
-                            }
-                        } //                        else if (args[0].equalsIgnoreCase("top"))
-                        //                        {
-                        //                        if (player.hasPermission("mineconomy.balance.top"))
-                        //                        {
-                        //                        try
-                        //                        {
-                        //                        Balance.getTop(player, Integer.parseInt(args[1]));
-                        //                        }
-                        //                        catch (NumberFormatException e)
-                        //                        {
-                        //                        player.sendMessage(MCLang.tag + MCLang.errorInt);
-                        //                        }
-                        //                        }
-                        //                        else
-                        //                        {
-                        //                        warn(player);
-                        //                        }
-                        //                        }
-                        else {
-                            player.sendMessage(MCLang.tag
-                                    + MCLang.errorCommandRecognition);
+                        } else {
+                            player.sendMessage(MCLang.tag + MCLang.errorCommandRecognition);
                         }
                     } else if (args.length == 3) {
                         if (args[0].equalsIgnoreCase("pay")) {
@@ -288,8 +207,7 @@ public class ChatExecutor implements CommandExecutor {
                         } else if (args[0].equalsIgnoreCase("set")) {
                             if (player.hasPermission("mineconomy.balance.set")) {
                                 try {
-                                    Balance.set(player, args[1],
-                                            Double.parseDouble(args[2]));
+                                    Balance.set(player, args[1], Double.parseDouble(args[2]));
                                 } catch (NumberFormatException e) {
                                     player.sendMessage(MCLang.tag
                                             + MCLang.errorMoneyFormat);
@@ -332,13 +250,6 @@ public class ChatExecutor implements CommandExecutor {
                                     player.sendMessage(MCLang.tag
                                             + MCLang.errorInt);
                                 }
-                            } else {
-                                warn(player);
-                            }
-                        } else if (args[0].equalsIgnoreCase("setcurrency")) {
-                            if (player
-                                    .hasPermission("mineconomy.currency.set.others")) {
-                                Balance.setCurrency(player, args[1], args[2]);
                             } else {
                                 warn(player);
                             }
