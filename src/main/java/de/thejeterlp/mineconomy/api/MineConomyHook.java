@@ -26,7 +26,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 public class MineConomyHook {
-
+    
     private static final AccountingBase accounting = DatabaseFactory.getDatabase();
 
     // Vault Methods -----------------------------------------------------------
@@ -37,7 +37,7 @@ public class MineConomyHook {
      * @param amount
      * @return True if the specified account has at least the specified amount.
      */
-    public static boolean canExternalAfford(String account, double amount) {
+    public static boolean canAfford(String account, double amount) {
         OfflinePlayer op = Bukkit.getOfflinePlayer(account);
         return MCCom.canAfford(op.getUniqueId(), amount);
     }
@@ -48,7 +48,7 @@ public class MineConomyHook {
      * @param account
      * @return Balance
      */
-    public static double getExternalBalance(String account) {
+    public static double getBalance(String account) {
         OfflinePlayer op = Bukkit.getOfflinePlayer(account);
         return MCCom.getBalance(op.getUniqueId());
     }
@@ -59,7 +59,7 @@ public class MineConomyHook {
      * @param account
      * @param balance
      */
-    public static void setExternalBalance(String account, double balance) {
+    public static void setBalance(String account, double balance) {
         OfflinePlayer op = Bukkit.getOfflinePlayer(account);
         MCCom.setBalance(op.getUniqueId(), balance);
     }
@@ -80,7 +80,7 @@ public class MineConomyHook {
      * @return name
      */
     public static String getName() {
-        return "MineConomy";
+        return MineConomy.getInstance().getName();
     }
 
     /**
@@ -100,9 +100,36 @@ public class MineConomyHook {
     public static MineConomy getPlugin() {
         return MineConomy.getInstance();
     }
-    
+
+    /**
+     * Returns the currency name
+     *
+     * @return String
+     */
     public static String getCurrencyName() {
         return Config.CURRENCY_NAME.getString();
     }
 
+    /**
+     * Creates a new account
+     *
+     * @param name username of a player
+     */
+    public static void create(String name) {
+        OfflinePlayer op = Bukkit.getOfflinePlayer(name);
+        if (!accounting.exists(op.getUniqueId())) {
+            accounting.create(op.getUniqueId());
+        }
+    }
+    
+    /**
+     * Checks if an account exists already for that given player
+     * @param name palyername
+     * @return always returns true, because a new account will be created
+     */
+    public static boolean hasAccount(String name) {
+        create(name);
+        return true;
+    }
+    
 }
