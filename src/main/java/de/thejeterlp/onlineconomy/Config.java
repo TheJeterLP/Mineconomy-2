@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package de.thejeterlp.mineconomy;
+package de.thejeterlp.onlineconomy;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +38,7 @@ public enum Config {
     private final String path;
     private final String description;
     private static YamlConfiguration cfg;
-    private static final File f = new File(MineConomy.getInstance().getDataFolder(), "config.yml");
+    private static final File f = new File(OnlineConomy.getInstance().getDataFolder(), "config.yml");
 
     private Config(String path, Object val, String description) {
         this.path = path;
@@ -79,7 +79,7 @@ public enum Config {
     }
 
     public static void load() {
-        MineConomy.getInstance().getDataFolder().mkdirs();
+        OnlineConomy.getInstance().getDataFolder().mkdirs();
         reload(false);
         String header = "";
         for (Config c : values()) {

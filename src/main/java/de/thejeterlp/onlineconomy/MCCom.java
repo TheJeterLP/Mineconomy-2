@@ -15,12 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package de.thejeterlp.mineconomy;
+package de.thejeterlp.onlineconomy;
 
-import de.thejeterlp.mineconomy.database.AccountingBase;
+import de.thejeterlp.onlineconomy.database.AccountingBase;
 import java.util.List;
 import java.util.UUID;
-import de.thejeterlp.mineconomy.database.DatabaseFactory;
+import de.thejeterlp.onlineconomy.database.DatabaseFactory;
 
 /**
  * Handles exterior classes reading/writing account values.
@@ -31,7 +31,7 @@ public class MCCom {
 
     private static final AccountingBase accounting = DatabaseFactory.getDatabase();
 
-    // MineConomy Account Methods ----------------------------------------------
+    // OnlineConomy Account Methods ----------------------------------------------
     /**
      * Returns the balance of the specified player.
      *
@@ -172,9 +172,9 @@ public class MCCom {
     }
 
     /**
-     * Gets an ArrayList with all MineConomy accounts.
+     * Gets an ArrayList with all OnlineConomy accounts.
      *
-     * @return An ArrayList of MineConomy Accounts
+     * @return An ArrayList of OnlineConomy Accounts
      */
     public static List<UUID> getAccounts() {
         return accounting.getAccounts();

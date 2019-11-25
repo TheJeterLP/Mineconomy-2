@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package de.thejeterlp.mineconomy.database;
+package de.thejeterlp.onlineconomy.database;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -25,7 +25,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
-import de.thejeterlp.mineconomy.MineConomy;
+import de.thejeterlp.onlineconomy.OnlineConomy;
 
 public abstract class Database extends AccountingBase {
 
@@ -44,7 +44,7 @@ public abstract class Database extends AccountingBase {
             Class d = Class.forName(driver);
             Object o = d.newInstance();
             if (!(o instanceof Driver)) {
-                MineConomy.getInstance().getLogger().log(Level.SEVERE, "Driver is not an instance of the Driver class!");
+                OnlineConomy.getInstance().getLogger().log(Level.SEVERE, "Driver is not an instance of the Driver class!");
             } else {
                 Driver dr = (Driver) o;
                 DriverManager.registerDriver(dr);

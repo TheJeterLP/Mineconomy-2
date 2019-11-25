@@ -15,13 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package de.thejeterlp.mineconomy.database;
+package de.thejeterlp.onlineconomy.database;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.logging.Level;
-import de.thejeterlp.mineconomy.Config;
-import de.thejeterlp.mineconomy.MineConomy;
+import de.thejeterlp.onlineconomy.Config;
+import de.thejeterlp.onlineconomy.OnlineConomy;
 
 public class DatabaseFactory {
 
@@ -31,14 +31,14 @@ public class DatabaseFactory {
         if (Config.MYSQL_USE.getBoolean()) {
             db = new MySQL(Config.MYSQL_IP.getString(), Config.MYSQL_USER.getString(), Config.MYSQL_PASSWORD.getString(), Config.MYSQL_DATABASE.getString(), Config.MYSQL_PORT.getInteger());
         } else {
-            db = new SQLite(new File(MineConomy.getInstance().getDataFolder(), "Database.db"));
+            db = new SQLite(new File(OnlineConomy.getInstance().getDataFolder(), "Database.db"));
         }
 
         if (db.testConnection()) {
             createTables();
-            MineConomy.getInstance().getLogger().log(Level.INFO, "Connected to database via {0}", db.getClass().getSimpleName());
+            OnlineConomy.getInstance().getLogger().log(Level.INFO, "Connected to database via {0}", db.getClass().getSimpleName());
         } else {
-            MineConomy.getInstance().getLogger().log(Level.SEVERE, "Could not connect to the Database!");
+            OnlineConomy.getInstance().getLogger().log(Level.SEVERE, "Could not connect to the Database!");
         }
 
     }
@@ -47,13 +47,13 @@ public class DatabaseFactory {
         try {
             String ACCOUNT_TABLE;
             if (db.getType() == Database.Type.SQLITE) {
-                ACCOUNT_TABLE = "CREATE TABLE IF NOT EXISTS `mineconomy_accounts` ("
+                ACCOUNT_TABLE = "CREATE TABLE IF NOT EXISTS `OnlineConomy_accounts` ("
                         + "`id` INTEGER PRIMARY KEY AUTOINCREMENT, "
                         + "`account` varchar(64) NOT NULL, "
                         + "`balance` DOUBLE NOT NULL"
                         + ");";
             } else {
-                ACCOUNT_TABLE = "CREATE TABLE IF NOT EXISTS `mineconomy_accounts` ("
+                ACCOUNT_TABLE = "CREATE TABLE IF NOT EXISTS `OnlineConomy_accounts` ("
                         + "`id` INTEGER PRIMARY KEY AUTO_INCREMENT, "
                         + "`account` varchar(64) NOT NULL, "
                         + "`balance` DOUBLE NOT NULL"

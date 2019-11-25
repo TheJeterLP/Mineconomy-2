@@ -15,16 +15,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package de.thejeterlp.mineconomy;
+package de.thejeterlp.onlineconomy;
 
-import de.thejeterlp.mineconomy.database.DatabaseFactory;
-import de.thejeterlp.mineconomy.commands.ChatExecutor;
-import de.thejeterlp.mineconomy.listeners.MCListener;
+import de.thejeterlp.onlineconomy.database.DatabaseFactory;
+import de.thejeterlp.onlineconomy.commands.ChatExecutor;
+import de.thejeterlp.onlineconomy.listeners.MCListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class MineConomy extends JavaPlugin {
+public class OnlineConomy extends JavaPlugin {
 
-    private static MineConomy INSTANCE;
+    private static OnlineConomy INSTANCE;
 
     @Override
     public void onEnable() {
@@ -48,10 +48,10 @@ public class MineConomy extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        log("MineConomy is disabled.");
+        log("OnlineConomy is disabled.");
     }
 
-    public static MineConomy getInstance() {
+    public static OnlineConomy getInstance() {
         return INSTANCE;
     }
 

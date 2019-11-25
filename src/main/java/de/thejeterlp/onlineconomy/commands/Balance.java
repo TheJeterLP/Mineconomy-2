@@ -15,12 +15,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package de.thejeterlp.mineconomy.commands;
+package de.thejeterlp.onlineconomy.commands;
 
 import java.util.UUID;
-import de.thejeterlp.mineconomy.Locales;
-import de.thejeterlp.mineconomy.MineConomy;
-import de.thejeterlp.mineconomy.MCCom;
+import de.thejeterlp.onlineconomy.Locales;
+import de.thejeterlp.onlineconomy.OnlineConomy;
+import de.thejeterlp.onlineconomy.MCCom;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -104,7 +104,7 @@ public class Balance {
             player.sendMessage(Locales.MESSAGE_PAYED_TO.replace("%amount%", amount + "").replaceAll("%player%", toPlayer));
 
             if (op.isOnline()) {
-                Player reciever = MineConomy.getInstance().getServer().getPlayer(toPlayer);
+                Player reciever = OnlineConomy.getInstance().getServer().getPlayer(toPlayer);
                 reciever.sendMessage(Locales.MESSAGE_PAYED_FROM.replace("%amount%", amount + "").replaceAll("%player%", name));
             }
 

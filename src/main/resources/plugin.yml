@@ -1,69 +1,69 @@
 name: ${project.artifactId}
-main: de.thejeterlp.mineconomy.MineConomy
+main: de.thejeterlp.onlineconomy.OnlineConomy
 version: ${project.version}
 author: TheJeterLP
-description: MineConomy is a simple, multi-feature Economy Plugin for Spigot Hack.
+description: OnlineConomy is a simple, multi-feature Economy Plugin for Spigot Hack.
 permissions:
-   mineconomy.*:
-      description: Gives access to all MineConomy commands.
+   OnlineConomy.*:
+      description: Gives access to all OnlineConomy commands.
       default: op
       children:
-         mineconomy.help: true
-         mineconomy.account.*: true
-         mineconomy.balance.*: true
-         mineconomy.currency.*: true
-         mineconomy.bank.*: true
-         mineconomy.save: true
-         mineconomy.reload: true
-   mineconomy.help:
-      description: Allows user to access MineConomy help.
+         OnlineConomy.help: true
+         OnlineConomy.account.*: true
+         OnlineConomy.balance.*: true
+         OnlineConomy.currency.*: true
+         OnlineConomy.bank.*: true
+         OnlineConomy.save: true
+         OnlineConomy.reload: true
+   OnlineConomy.help:
+      description: Allows user to access OnlineConomy help.
       default: true
-   mineconomy.account.*:
+   OnlineConomy.account.*:
       description: Allows user to have an account.
       default: op   
-   mineconomy.balance.*:
+   OnlineConomy.balance.*:
       description: Allows user to have access to basic balance features.
       default: op
       children:
-         mineconomy.balance.check: true
-         mineconomy.balance.get: true
-         mineconomy.balance.set: true
-         mineconomy.balance.pay: true
-         mineconomy.balance.give: true
-         mineconomy.balance.take: true
-         mineconomy.balance.empty: true
-         mineconomy.balance.top: true
-   mineconomy.balance.check:
+         OnlineConomy.balance.check: true
+         OnlineConomy.balance.get: true
+         OnlineConomy.balance.set: true
+         OnlineConomy.balance.pay: true
+         OnlineConomy.balance.give: true
+         OnlineConomy.balance.take: true
+         OnlineConomy.balance.empty: true
+         OnlineConomy.balance.top: true
+   OnlineConomy.balance.check:
       description: Allows user to check their balance.
       default: true
-   mineconomy.balance.get:
+   OnlineConomy.balance.get:
       description: Allows user to get another user's balance.
       default: op
-   mineconomy.balance.set:
+   OnlineConomy.balance.set:
       description: Allows user to set another user's balance.
       default: op
-   mineconomy.balance.pay:
+   OnlineConomy.balance.pay:
       description: Allows user to pay another user.
       default: true
-   mineconomy.balance.give:
+   OnlineConomy.balance.give:
       description: Allows user to give money to another user.
       default: op
-   mineconomy.balance.take:
+   OnlineConomy.balance.take:
       description: Allows user to take money away from another user.
       default: op
-   mineconomy.balance.empty:
+   OnlineConomy.balance.empty:
       description: Sets another user's balance to 0.
       default: op   
-   mineconomy.currency.*:
+   OnlineConomy.currency.*:
       description: Allows user access to all currency commands.
       default: op
       children:
-         mineconomy.currency.set: true
-         mineconomy.currency.set.others: true
-   mineconomy.currency.set:
+         OnlineConomy.currency.set: true
+         OnlineConomy.currency.set.others: true
+   OnlineConomy.currency.set:
       description: Allows user set their currency.
       default: op
-   mineconomy.currency.set.others:
+   OnlineConomy.currency.set.others:
       description: Allows user to set other accounts' currencies.
       default: op
 commands:
@@ -74,7 +74,7 @@ commands:
       description: Displays your balance.
       usage: /mc balance
    mc help:
-      description: Displays MineConomy help.
+      description: Displays OnlineConomy help.
       usage: /mc help
    mc pay:
       description: Pays another player.

@@ -15,17 +15,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package de.thejeterlp.mineconomy.api;
+package de.thejeterlp.onlineconomy.api;
 
-import de.thejeterlp.mineconomy.Config;
-import de.thejeterlp.mineconomy.MineConomy;
-import de.thejeterlp.mineconomy.database.AccountingBase;
-import de.thejeterlp.mineconomy.database.DatabaseFactory;
-import de.thejeterlp.mineconomy.MCCom;
+import de.thejeterlp.onlineconomy.Config;
+import de.thejeterlp.onlineconomy.OnlineConomy;
+import de.thejeterlp.onlineconomy.database.AccountingBase;
+import de.thejeterlp.onlineconomy.database.DatabaseFactory;
+import de.thejeterlp.onlineconomy.MCCom;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
-public class MineConomyHook {
+public class OnlineConomyHook {
     
     private static final AccountingBase accounting = DatabaseFactory.getDatabase();
 
@@ -75,30 +75,30 @@ public class MineConomyHook {
     }
 
     /**
-     * Returns the name of MineConomy.
+     * Returns the name of OnlineConomy.
      *
      * @return name
      */
     public static String getName() {
-        return MineConomy.getInstance().getName();
+        return OnlineConomy.getInstance().getName();
     }
 
     /**
-     * Returns the current version of MineConomy.
+     * Returns the current version of OnlineConomy.
      *
      * @return version
      */
     public static String getVersion() {
-        return MineConomy.getInstance().getDescription().getVersion();
+        return OnlineConomy.getInstance().getDescription().getVersion();
     }
 
     /**
-     * Returns the MineConomy plugin.
+     * Returns the OnlineConomy plugin.
      *
-     * @return MineConomy
+     * @return OnlineConomy
      */
-    public static MineConomy getPlugin() {
-        return MineConomy.getInstance();
+    public static OnlineConomy getPlugin() {
+        return OnlineConomy.getInstance();
     }
 
     /**

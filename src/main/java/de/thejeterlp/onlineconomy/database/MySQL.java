@@ -15,9 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package de.thejeterlp.mineconomy.database;
+package de.thejeterlp.onlineconomy.database;
 
-import java.io.File;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,32 +24,42 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import de.thejeterlp.mineconomy.Config;
+import de.thejeterlp.onlineconomy.Config;
 
-public class SQLite extends Database {
+public class MySQL extends Database {
 
-    private final File dbFile;
+    private final String host, user, password, dbName;
+    private final int port;
 
     /**
-     * Creates a new instance for SQLite databases.
+     * Creates a new instance for MySQL databases. Statements are done by {@link com.admincmd.admincmd.database.MySQL#executeStatement(java.lang.String)
+     * }
      *
-     * @param dbFile Database file
+     * @param host the host where the mysql server is on.
+     * @param user the username of the database-account
+     * @param password the password of the suer for the database account
+     * @param dbName the name of the database
+     * @param port the port of the database server
      */
-    public SQLite(File dbFile) {
-        super("org.sqlite.JDBC", Type.SQLITE);
-        dbFile.getParentFile().mkdirs();
-        this.dbFile = dbFile;
+    public MySQL(String host, String user, String password, String dbName, int port) {
+        super("com.mysql.jdbc.Driver", Type.MYSQL);
+        this.host = host;
+        this.user = user;
+        this.password = password;
+        this.dbName = dbName;
+        this.port = port;
     }
 
     @Override
     public void reactivateConnection() throws SQLException {
-        setConnection(DriverManager.getConnection("jdbc:sqlite://" + dbFile.getAbsolutePath()));
+        String dsn = "jdbc:mysql://" + host + ":" + port + "/" + dbName;
+        setConnection(DriverManager.getConnection(dsn, user, password));
     }
 
     @Override
     public double getBalance(UUID account) {
         try {
-            PreparedStatement s = getPreparedStatement("SELECT * FROM `mineconomy_accounts` WHERE `account` = ?;");
+            PreparedStatement s = getPreparedStatement("SELECT * FROM `OnlineConomy_accounts` WHERE `account` = ?;");
             s.setString(1, account.toString());
             ResultSet rs = s.executeQuery();
 
@@ -78,7 +87,7 @@ public class SQLite extends Database {
         }
 
         try {
-            PreparedStatement st = getPreparedStatement("UPDATE `mineconomy_accounts` SET `balance` = ? WHERE `account` = ?;");
+            PreparedStatement st = getPreparedStatement("UPDATE `OnlineConomy_accounts` SET `balance` = ? WHERE `account` = ?;");
             st.setDouble(1, amount);
             st.setString(2, account.toString());
             st.executeUpdate();
@@ -91,7 +100,7 @@ public class SQLite extends Database {
     @Override
     public boolean exists(UUID account) {
         try {
-            PreparedStatement s = getPreparedStatement("SELECT * FROM `mineconomy_accounts` WHERE `account` = ?;");
+            PreparedStatement s = getPreparedStatement("SELECT * FROM `OnlineConomy_accounts` WHERE `account` = ?;");
             s.setString(1, account.toString());
             ResultSet rs = s.executeQuery();
             boolean ret = rs.next();
@@ -107,7 +116,7 @@ public class SQLite extends Database {
     @Override
     public void delete(UUID account) {
         try {
-            PreparedStatement st = getPreparedStatement("DELETE FROM `mineconomy_accounts` WHERE `account` = ?;");
+            PreparedStatement st = getPreparedStatement("DELETE FROM `OnlineConomy_accounts` WHERE `account` = ?;");
             st.setString(1, account.toString());
             st.executeUpdate();
             closeStatement(st);
@@ -119,7 +128,7 @@ public class SQLite extends Database {
     @Override
     public void create(UUID account) {
         try {
-            PreparedStatement st = getPreparedStatement("INSERT INTO `mineconomy_accounts` (account, balance) VALUES (?,?);");
+            PreparedStatement st = getPreparedStatement("INSERT INTO `OnlineConomy_accounts` (account, balance) VALUES (?,?);");
             st.setString(1, account.toString());
             st.setDouble(2, Config.STARTING_BALANCE.getDouble());
             st.executeUpdate();
@@ -134,7 +143,7 @@ public class SQLite extends Database {
         List<UUID> result = new ArrayList<>();
 
         try {
-            PreparedStatement s = getPreparedStatement("SELECT account FROM `mineconomy_accounts`;");
+            PreparedStatement s = getPreparedStatement("SELECT account FROM `OnlineConomy_accounts`;");
             ResultSet rs = s.executeQuery();
 
             while (rs.next()) {
